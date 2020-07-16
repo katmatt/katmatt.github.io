@@ -27,7 +27,7 @@
 
 &lt;h2 id=&#34;setup-your-gradle-build&#34;&gt;Setup your gradle build&lt;/h2&gt;
 
-&lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin and central and this makes it very easy to integrate it into our &lt;em&gt;gradle.build&lt;/em&gt; file:&lt;/p&gt;
+&lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin central and this makes it very easy to integrate it into our &lt;em&gt;gradle.build&lt;/em&gt; file:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;plugins {
     id &#39;com.palantir.graal&#39; version &#39;0.7.1&#39;
@@ -47,7 +47,7 @@ graal {
 
 &lt;h2 id=&#34;build-your-first-native-executable&#34;&gt;Build your first native executable&lt;/h2&gt;
 
-&lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute &lt;em&gt;native-image&lt;/em&gt; and generate the executable to &lt;code&gt;/build/graal/cross-compile-demo&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute &lt;em&gt;native-image&lt;/em&gt; and generate the executable to &lt;em&gt;build/graal/cross-compile-demo&lt;/em&gt;.&lt;/p&gt;
 
 &lt;p&gt;Running this executable then outputs the classical:&lt;/p&gt;
 
@@ -66,7 +66,7 @@ graal {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;With this additional task, we can now build and archive our executable by running &lt;code&gt;./gradlew zipExecutable&lt;/code&gt;. This produces our zip file in the &lt;code&gt;build/dist&lt;/code&gt; folder. You can see the full build file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle&#34;&gt;build.gradle&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;With this additional task, we can now build and archive our executable by running &lt;code&gt;./gradlew zipExecutable&lt;/code&gt;. This produces our zip file in the &lt;em&gt;build/dist&lt;/em&gt; folder. You can see the full build file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle&#34;&gt;build.gradle&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;cross-compiling-with-github-actions&#34;&gt;Cross-compiling with Github Actions&lt;/h2&gt;
 
@@ -78,7 +78,7 @@ graal {
     - &#39;v*&#39; # Push events to matching v*, i.e. v1.0, v20.15.10
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Our workflow then creates a github release for this tag with the following job definition and stores the &lt;code&gt;upload_url&lt;/code&gt; variable as an output that our downstream jobs can use to upload their artifacts:&lt;/p&gt;
+&lt;p&gt;Our workflow then creates a github release for this tag and stores the &lt;em&gt;upload_url&lt;/em&gt; variable as an output that our downstream jobs can use to upload their artifacts with the following job definition :&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;jobs:
   create-release:
@@ -99,7 +99,7 @@ graal {
           prerelease: false
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;We now add jobs for each supported operating system, which depends on our &lt;code&gt;create-release&lt;/code&gt; job by setting the &lt;code&gt;needs:&lt;/code&gt; facet to &lt;code&gt;create-release&lt;/code&gt;. The following workflow defines the release build for linux:&lt;/p&gt;
+&lt;p&gt;We now add jobs for each supported operating system, which depends on our &lt;em&gt;create-release&lt;/em&gt; job by setting the &lt;em&gt;needs:&lt;/em&gt; facet to &lt;em&gt;create-release&lt;/em&gt;. The following workflow defines the release build for linux:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;  perform-release-linux:
     needs: create-release
@@ -125,14 +125,14 @@ graal {
         asset_content_type: application/zip
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;And this job references the &lt;code&gt;upload_url&lt;/code&gt; output from our &lt;code&gt;create-release&lt;/code&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
+&lt;p&gt;And this job references the &lt;em&gt;upload_url&lt;/em&gt; output from our &lt;em&gt;create-release&lt;/em&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
 You can see the full workflow file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml&#34;&gt;perform-release.yml&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;This article showed you how you can leverage github actions to cross-compile your Java program for different target architectures. The presented solution works with an easy setup. But it has a drawback too: Our workflow downloads the GraalVM distribution for each platform on each release. And releasing our simple demo program took already 5 minutes.&lt;/p&gt;
 
-&lt;p&gt;But if you compare this solution with running the cross-compilation manually - across several computers or virtual machines - and if your release frequency is daily or weekly, then this article provides a good enough solution. And our proposed solution could be further simplified by using matrix builds or by cahing the downloaded GraalVM distribution, so feel free to improve this solution further!&lt;/p&gt;
+&lt;p&gt;But if you compare this solution with running the cross-compilation manually - across several computers or virtual machines - and if your release frequency is daily or weekly, then this article provides a good enough solution. Our proposed solution could be further improved by using matrix builds or by caching the downloaded GraalVM distribution, so feel free to improve this solution further!&lt;/p&gt;
 
 &lt;p&gt;You can find the source code for this article here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions&#34;&gt;https://github.com/katmatt/cross-compile-gh-actions&lt;/a&gt;&lt;/p&gt;
 </description>
