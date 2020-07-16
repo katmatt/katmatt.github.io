@@ -1,14 +1,14 @@
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <channel>
-   <title>katmatt blogs</title>
-   <link>http://katmatt.github.io/</link>
-   <description>Recent content on katmatt blogs</description>
+   <title>Posts on katmatt blogs</title>
+   <link>http://katmatt.github.io/posts/</link>
+   <description>Recent content in Posts on katmatt blogs</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
    <lastBuildDate>Wed, 15 Jul 2020 15:35:10 +0200</lastBuildDate>
    
-       <atom:link href="http://katmatt.github.io/index.xml" rel="self" type="application/rss+xml" />
+       <atom:link href="http://katmatt.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
    
    
      <item>

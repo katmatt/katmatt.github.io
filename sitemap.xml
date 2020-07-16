@@ -3,11 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://katmatt.github.io/categories/</loc>
+    <loc>http://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
   </url>
   
   <url>
     <loc>http://katmatt.github.io/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://katmatt.github.io/posts/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://katmatt.github.io/categories/</loc>
   </url>
   
   <url>
