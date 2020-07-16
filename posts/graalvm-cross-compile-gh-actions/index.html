@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="The HTML5 Herald" />
 <meta name="author" content="" /><meta property="og:title" content="GraalVM/native-image cross-compilation with github Actions" />
-<meta property="og:description" content="GraalVM (https://www.graalvm.org/) allows to compile Java programs into native code with the native-image executable. This gives Java developers new options, because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system." />
+<meta property="og:description" content="GraalVM (https://www.graalvm.org/) allows to compile Java programs into native code with the native-image executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/" />
 <meta property="article:published_time" content="2020-07-15T15:35:10+02:00" />
@@ -16,7 +16,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GraalVM/native-image cross-compilation with github Actions"/>
-<meta name="twitter:description" content="GraalVM (https://www.graalvm.org/) allows to compile Java programs into native code with the native-image executable. This gives Java developers new options, because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system."/>
+<meta name="twitter:description" content="GraalVM (https://www.graalvm.org/) allows to compile Java programs into native code with the native-image executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system."/>
 
 <meta name="generator" content="Hugo 0.57.2" />
     
@@ -76,22 +76,22 @@
 
     
 
-<p>GraalVM (<a href="https://www.graalvm.org/">https://www.graalvm.org/</a>) allows to compile Java programs into native code with the <code>native-image</code> executable. This gives Java developers new options, because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.</p>
+<p>GraalVM (<a href="https://www.graalvm.org/">https://www.graalvm.org/</a>) allows to compile Java programs into native code with the <em>native-image</em> executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.</p>
 
-<p>But one limitation of <code>native-image</code> is that it doesn&rsquo;t support cross-compilation out of the box (see open issue: <a href="https://github.com/oracle/graal/issues/407">native-image: Cross compilation support?</a>). That means that you have to run <code>native-image</code> on all platforms that your Java program should support.</p>
+<p>But one limitation of <em>native-image</em> is that it doesn&rsquo;t support cross-compilation out of the box (see open issue: <a href="https://github.com/oracle/graal/issues/407">native-image: Cross compilation support?</a>). That means that you have to run <em>native-image</em> on all platforms that your Java program should support.</p>
 
 <p>This article will show you how you can use github actions to simplify this task by automating it. Then the only thing you have to do to trigger the release of native excutables of your program is to tag your release and push that tag to github.</p>
 
 <h2 id="setup-your-gradle-build">Setup your gradle build</h2>
 
-<p>In this article,  we will use the popular <a href="https://gradle.org/">gradle</a> build tool together with the <a href="https://github.com/palantir/gradle-graal">Palantir GraalVM gradle plugin</a>. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin and central and this makes it very easy to integrate it into our <code>gradle.build</code> file:</p>
+<p>In this article,  we will use the popular <a href="https://gradle.org/">gradle</a> build tool together with the <a href="https://github.com/palantir/gradle-graal">Palantir GraalVM gradle plugin</a>. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin and central and this makes it very easy to integrate it into our <em>gradle.build</em> file:</p>
 
 <pre><code class="language-gradle">plugins {
     id 'com.palantir.graal' version '0.7.1'
 }
 </code></pre>
 
-<p>Then you can add the following entries to your modules <code>build.gradle</code> to configure the <code>nativeImage</code> gradle task:</p>
+<p>Then you can add the following entries to your modules <em>build.gradle</em> to configure the <em>nativeImage</em> gradle task:</p>
 
 <pre><code class="language-gradle">apply plugin: 'com.palantir.graal'
 
@@ -104,14 +104,14 @@ graal {
 
 <h2 id="build-your-first-native-executable">Build your first native executable</h2>
 
-<p>After this setup, building your first native executable is as simple as running <code>./gradlew nativeImage</code>. This will download the graal toolchain to your computer, execute the <code>native-image</code> compiler and then generate the executable to <code>/build/graal/cross-compile-demo</code>.</p>
+<p>After this setup, building your first native executable is as simple as running <code>./gradlew nativeImage</code>. This will download the graal toolchain to your computer, execute <em>native-image</em> and generate the executable to <code>/build/graal/cross-compile-demo</code>.</p>
 
 <p>Running this executable then outputs the classical:</p>
 
 <pre><code>Hello world.
 </code></pre>
 
-<p>The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our <code>build.gradle</code> file:</p>
+<p>The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our <em>build.gradle</em> file:</p>
 
 <pre><code class="language-gradle">task zipExecutable(type: Zip) {
     dependsOn 'nativeImage'
@@ -135,7 +135,7 @@ graal {
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 </code></pre>
 
-<p>Our workflow then creates a github release for this tag with the following job definition and stores the <code>upload_url</code> as an output that our downstream jobs can use to upload their artifacts:</p>
+<p>Our workflow then creates a github release for this tag with the following job definition and stores the <code>upload_url</code> variable as an output that our downstream jobs can use to upload their artifacts:</p>
 
 <pre><code class="language-yaml">jobs:
   create-release:

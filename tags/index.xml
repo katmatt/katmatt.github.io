@@ -18,22 +18,22 @@
        <guid>http://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</guid>
        <description>
 
-&lt;p&gt;GraalVM (&lt;a href=&#34;https://www.graalvm.org/&#34;&gt;https://www.graalvm.org/&lt;/a&gt;) allows to compile Java programs into native code with the &lt;code&gt;native-image&lt;/code&gt; executable. This gives Java developers new options, because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.&lt;/p&gt;
+&lt;p&gt;GraalVM (&lt;a href=&#34;https://www.graalvm.org/&#34;&gt;https://www.graalvm.org/&lt;/a&gt;) allows to compile Java programs into native code with the &lt;em&gt;native-image&lt;/em&gt; executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.&lt;/p&gt;
 
-&lt;p&gt;But one limitation of &lt;code&gt;native-image&lt;/code&gt; is that it doesn&amp;rsquo;t support cross-compilation out of the box (see open issue: &lt;a href=&#34;https://github.com/oracle/graal/issues/407&#34;&gt;native-image: Cross compilation support?&lt;/a&gt;). That means that you have to run &lt;code&gt;native-image&lt;/code&gt; on all platforms that your Java program should support.&lt;/p&gt;
+&lt;p&gt;But one limitation of &lt;em&gt;native-image&lt;/em&gt; is that it doesn&amp;rsquo;t support cross-compilation out of the box (see open issue: &lt;a href=&#34;https://github.com/oracle/graal/issues/407&#34;&gt;native-image: Cross compilation support?&lt;/a&gt;). That means that you have to run &lt;em&gt;native-image&lt;/em&gt; on all platforms that your Java program should support.&lt;/p&gt;
 
 &lt;p&gt;This article will show you how you can use github actions to simplify this task by automating it. Then the only thing you have to do to trigger the release of native excutables of your program is to tag your release and push that tag to github.&lt;/p&gt;
 
 &lt;h2 id=&#34;setup-your-gradle-build&#34;&gt;Setup your gradle build&lt;/h2&gt;
 
-&lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin and central and this makes it very easy to integrate it into our &lt;code&gt;gradle.build&lt;/code&gt; file:&lt;/p&gt;
+&lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin and central and this makes it very easy to integrate it into our &lt;em&gt;gradle.build&lt;/em&gt; file:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;plugins {
     id &#39;com.palantir.graal&#39; version &#39;0.7.1&#39;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Then you can add the following entries to your modules &lt;code&gt;build.gradle&lt;/code&gt; to configure the &lt;code&gt;nativeImage&lt;/code&gt; gradle task:&lt;/p&gt;
+&lt;p&gt;Then you can add the following entries to your modules &lt;em&gt;build.gradle&lt;/em&gt; to configure the &lt;em&gt;nativeImage&lt;/em&gt; gradle task:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;apply plugin: &#39;com.palantir.graal&#39;
 
@@ -46,14 +46,14 @@ graal {
 
 &lt;h2 id=&#34;build-your-first-native-executable&#34;&gt;Build your first native executable&lt;/h2&gt;
 
-&lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute the &lt;code&gt;native-image&lt;/code&gt; compiler and then generate the executable to &lt;code&gt;/build/graal/cross-compile-demo&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute &lt;em&gt;native-image&lt;/em&gt; and generate the executable to &lt;code&gt;/build/graal/cross-compile-demo&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Running this executable then outputs the classical:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;Hello world.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our &lt;code&gt;build.gradle&lt;/code&gt; file:&lt;/p&gt;
+&lt;p&gt;The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our &lt;em&gt;build.gradle&lt;/em&gt; file:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;task zipExecutable(type: Zip) {
     dependsOn &#39;nativeImage&#39;
@@ -77,7 +77,7 @@ graal {
     - &#39;v*&#39; # Push events to matching v*, i.e. v1.0, v20.15.10
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Our workflow then creates a github release for this tag with the following job definition and stores the &lt;code&gt;upload_url&lt;/code&gt; as an output that our downstream jobs can use to upload their artifacts:&lt;/p&gt;
+&lt;p&gt;Our workflow then creates a github release for this tag with the following job definition and stores the &lt;code&gt;upload_url&lt;/code&gt; variable as an output that our downstream jobs can use to upload their artifacts:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;jobs:
   create-release:
