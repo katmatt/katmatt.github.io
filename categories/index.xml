@@ -41,6 +41,7 @@ graal {
     graalVersion &#39;20.0.0&#39;
     outputName &#39;cross-compile-demo&#39;
     mainClass &#39;com.maschinenstuermer.crosscompile.demo.App&#39;
+    javaVersion &#39;11&#39;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -105,10 +106,10 @@ graal {
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build native image with Gradle
@@ -126,6 +127,13 @@ graal {
 
 &lt;p&gt;And this job references the &lt;em&gt;upload_url&lt;/em&gt; output from our &lt;em&gt;create-release&lt;/em&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
 You can see the full workflow file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml&#34;&gt;perform-release.yml&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;issues-with-the-build-on-windows&#34;&gt;Issues with the build on windows&lt;/h3&gt;
+
+&lt;p&gt;I initially started with the default java 8 version for the graal build. But I couldn&amp;rsquo;t get this to run on windows because it required the installation of some additional build tools and I wasn&amp;rsquo;t able to set them up correctly. But when I switched to Java 11 then everything worked as smoothly as I hoped for!
+And you still can see my attempts fixing this issue in the commit history: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/commits/master&#34;&gt;commit history&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Another unexpected finding was that the workflow can perform the unix command &lt;em&gt;chmod&lt;/em&gt; on windows machines! I guess the github windows images are configured with the windows subsystem for linux (WSL) and this makes it possible to &lt;em&gt;chmod&lt;/em&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 

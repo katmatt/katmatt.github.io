@@ -65,7 +65,7 @@
 
         
 
-        <li>4 minutes read</li>
+        <li>5 minutes read</li>
     </ul>
 </aside>
 
@@ -99,6 +99,7 @@ graal {
     graalVersion '20.0.0'
     outputName 'cross-compile-demo'
     mainClass 'com.maschinenstuermer.crosscompile.demo.App'
+    javaVersion '11'
 }
 </code></pre>
 
@@ -163,10 +164,10 @@ graal {
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build native image with Gradle
@@ -184,6 +185,13 @@ graal {
 
 <p>And this job references the <em>upload_url</em> output from our <em>create-release</em> job with the <code>${{ needs.create-release.outputs.upload_url }}</code> expression.
 You can see the full workflow file here: <a href="https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml">perform-release.yml</a></p>
+
+<h3 id="issues-with-the-build-on-windows">Issues with the build on windows</h3>
+
+<p>I initially started with the default java 8 version for the graal build. But I couldn&rsquo;t get this to run on windows because it required the installation of some additional build tools and I wasn&rsquo;t able to set them up correctly. But when I switched to Java 11 then everything worked as smoothly as I hoped for!
+And you still can see my attempts fixing this issue in the commit history: <a href="https://github.com/katmatt/cross-compile-gh-actions/commits/master">commit history</a></p>
+
+<p>Another unexpected finding was that the workflow can perform the unix command <em>chmod</em> on windows machines! I guess the github windows images are configured with the windows subsystem for linux (WSL) and this makes it possible to <em>chmod</em>.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
