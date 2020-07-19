@@ -2,20 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <channel>
    <title>Categories on katmatt blogs</title>
-   <link>http://katmatt.github.io/categories/</link>
+   <link>https://katmatt.github.io/categories/</link>
    <description>Recent content in Categories on katmatt blogs</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
    
-       <atom:link href="http://katmatt.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+       <atom:link href="https://katmatt.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
    
    
      <item>
        <title>GraalVM/native-image cross-compilation with github Actions</title>
-       <link>http://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</link>
+       <link>https://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</link>
        <pubDate>Wed, 15 Jul 2020 15:35:10 +0200</pubDate>
        
-       <guid>http://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</guid>
+       <guid>https://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</guid>
        <description>
 
 &lt;p&gt;GraalVM (&lt;a href=&#34;https://www.graalvm.org/&#34;&gt;https://www.graalvm.org/&lt;/a&gt;) allows to compile Java programs into native code with the &lt;em&gt;native-image&lt;/em&gt; executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.&lt;/p&gt;
