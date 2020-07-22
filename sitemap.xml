@@ -3,7 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://katmatt.github.io/categories/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://katmatt.github.io/categories/continuous-integration/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://katmatt.github.io/tags/cross-compilation/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://katmatt.github.io/tags/github-actions/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://katmatt.github.io/tags/graal/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://katmatt.github.io/tags/java/</loc>
     <lastmod>2020-07-15T15:35:10+02:00</lastmod>
   </url>
   
@@ -13,16 +43,18 @@
   </url>
   
   <url>
+    <loc>https://katmatt.github.io/tags/native-image/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://katmatt.github.io/posts/</loc>
     <lastmod>2020-07-15T15:35:10+02:00</lastmod>
   </url>
   
   <url>
-    <loc>https://katmatt.github.io/categories/</loc>
-  </url>
-  
-  <url>
     <loc>https://katmatt.github.io/tags/</loc>
+    <lastmod>2020-07-15T15:35:10+02:00</lastmod>
   </url>
   
 </urlset>
