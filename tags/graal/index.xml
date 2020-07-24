@@ -247,7 +247,7 @@ function draw(ctx: CanvasRenderingContext2D, game: Game) {
 
 &lt;p&gt;This function provides type-safe access to the &lt;em&gt;Stone&lt;/em&gt; properties because the typescript compiler can infer the correct type based on the &lt;em&gt;switch&lt;/em&gt; statement. This makes it quite easy to write this function.&lt;/p&gt;
 
-&lt;p&gt;But the &lt;em&gt;drawBoard&lt;/em&gt; function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.&lt;/p&gt;
+&lt;p&gt;But the &lt;em&gt;draw&lt;/em&gt; function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.&lt;/p&gt;
 
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
