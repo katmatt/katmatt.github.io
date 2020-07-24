@@ -1,14 +1,14 @@
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <channel>
-   <title>Categories on katmatt blogs</title>
-   <link>https://katmatt.github.io/categories/</link>
-   <description>Recent content in Categories on katmatt blogs</description>
+   <title>programming on katmatt blogs</title>
+   <link>https://katmatt.github.io/categories/programming/</link>
+   <description>Recent content in programming on katmatt blogs</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
    <lastBuildDate>Thu, 23 Jul 2020 14:04:10 +0200</lastBuildDate>
    
-       <atom:link href="https://katmatt.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+       <atom:link href="https://katmatt.github.io/categories/programming/index.xml" rel="self" type="application/rss+xml" />
    
    
      <item>

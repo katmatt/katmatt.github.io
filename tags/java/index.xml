@@ -12,6 +12,259 @@
    
    
      <item>
+       <title>HTML 5 based board game with TypeScript</title>
+       <link>https://katmatt.github.io/posts/html5-boardgame-with-type-script/</link>
+       <pubDate>Thu, 23 Jul 2020 14:04:10 +0200</pubDate>
+       
+       <guid>https://katmatt.github.io/posts/html5-boardgame-with-type-script/</guid>
+       <description>
+
+&lt;p&gt;A long, long time ago (to be precise: in the year 2000 AD) I wrote a C++/KDE version of the boardgame &lt;a href=&#34;https://en.wikipedia.org/wiki/Ishido:_The_Way_of_Stones&#34;&gt;Ishido&lt;/a&gt; and you can still find my website for this game conserved at the wayback machine: &lt;a href=&#34;https://web.archive.org/web/20000917222625/http://www.informatik.uni-oldenburg.de/~km/kishido/&#34;&gt;kishido&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This little game was even published on CD in a Japanese Linux magazine and I still own the copy they sent to me. Another funny story: In 2006 I was contacted by a programmer who wanted to use my graphics in a &lt;a href=&#34;https://en.wikipedia.org/wiki/PalmPilot_Professional&#34;&gt;Palm Pilot&lt;/a&gt; version of this game and you can still find it at &lt;a href=&#34;https://sourceforge.net/projects/palmishido&#34;&gt;https://sourceforge.net/projects/palmishido&lt;/a&gt;. And I&amp;rsquo;m still joking about my &lt;a href=&#34;https://en.wikipedia.org/wiki/Programmer_art&#34;&gt;&amp;ldquo;programmer artwork&amp;rdquo;&lt;/a&gt;, but I still can&amp;rsquo;t afford a graphic designer for my hobby projects and looks like some people even like my artwork :-)&lt;/p&gt;
+
+&lt;p&gt;And this leads us to the topic of this blog: I ported this game to HTML5/TypeScript and it was great to see how technology advanced in the last 20 years! And I had a lot of fun too and thought it would be interesting to share my insights with you.&lt;/p&gt;
+
+&lt;h2 id=&#34;setting-the-stage&#34;&gt;Setting the stage&lt;/h2&gt;
+
+&lt;p&gt;I initially considered to port the C++ code to TypeScript, but then I thought it would be more fun to start from scratch. At this stage, I also decided to ditch the old object-oriented model and instead go with the more functional approach.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;ishido-board.png&#34; alt=&#34;Ishido ported to HTML5&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;modeling-the-game-and-the-board&#34;&gt;Modeling the game and the board&lt;/h2&gt;
+
+&lt;p&gt;Since I didn&amp;rsquo;t want to use an object-oriented approach, I decided to use tagged unions to model the tiles on the board. And to enforce this idea further, I didn&amp;rsquo;t use the similar &lt;em&gt;interface&lt;/em&gt; construct and instead settled on using the &lt;em&gt;type&lt;/em&gt; construct instead.&lt;/p&gt;
+
+&lt;p&gt;I started with defining a union &lt;em&gt;Tile&lt;/em&gt; type, which is either an &lt;em&gt;EmptyTile&lt;/em&gt; or a &lt;em&gt;Stone&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type Tile = EmptyTile | Stone
+
+type EmptyTile = {
+    type: &amp;quot;empty&amp;quot;
+}
+
+type Stone = {
+    type: &amp;quot;stone&amp;quot;,
+    symbol: number,
+    color: number
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And these two &lt;em&gt;Tile&lt;/em&gt; subtypes have a &lt;em&gt;type&lt;/em&gt; discriminator and this allows the typescript compile to infer the correct type in &lt;em&gt;switch&lt;/em&gt; or &lt;em&gt;if&lt;/em&gt; statements if they check the value of the &lt;em&gt;type&lt;/em&gt; discriminator.&lt;/p&gt;
+
+&lt;p&gt;And these types then allowed me to model the &lt;em&gt;Board&lt;/em&gt; and the &lt;em&gt;Game&lt;/em&gt; with the following type definition:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type Board = {
+  background: number[][]
+  tiles: Tile[][]
+  nextStone?: Stone
+}
+
+type Game = {
+  board: Board
+  stoneStack: Stone[]
+  validPositions: Position2D[]
+  score: number
+  fourWays: number
+  showHint: boolean
+  assets: Assets
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And as I said earlier, I didn&amp;rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.&lt;/p&gt;
+
+&lt;p&gt;For checking the valid positions for a given stone I again used a tagged union type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type MatchResult = NotMatching | Match
+
+type NotMatching = {
+  type: &#39;NotMatching&#39;
+}
+
+type Match = {
+  type: &#39;Match&#39;
+  colorMatches: number
+  symbolMatches: number
+}
+
+function match(s1: Stone, s2: Tile): MatchResult {
+  if (s2.type == &#39;empty&#39;) {
+    return {
+      type: &#39;Match&#39;,
+      colorMatches: 0,
+      symbolMatches: 0,
+    }
+  }
+  const colorMatch = s1.color === s2.color
+  const symbolMatch = s1.symbol === s2.symbol
+  if (colorMatch || symbolMatch) {
+    return {
+      type: &#39;Match&#39;,
+      colorMatches: colorMatch ? 1 : 0,
+      symbolMatches: symbolMatch ? 1 : 0,
+    }
+  }
+  return {
+    type: &#39;NotMatching&#39;,
+  }
+}
+
+function getMatchResults(board: Board, position: Position2D) {
+  const {nextStone, tiles} = board
+  const {x, y} = position
+  const matchResults: MatchResult[] = []
+  if (nextStone) {
+    if (tiles[x][y].type === &#39;empty&#39;) {
+      if (x &amp;gt; 0) {
+        const left = tiles[x - 1][y]
+        matchResults.push(match(nextStone, left))
+      }
+      if (x &amp;lt; BOARD_WIDTH - 1) {
+        const right = tiles[x + 1][y]
+        matchResults.push(match(nextStone, right))
+      }
+      if (y &amp;gt; 0) {
+        const top = tiles[x][y - 1]
+        matchResults.push(match(nextStone, top))
+      }
+      if (y &amp;lt; BOARD_HEIGHT - 1) {
+        const bottom = tiles[x][y + 1]
+        matchResults.push(match(nextStone, bottom))
+      }
+    }
+  }
+  return matchResults
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&amp;rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!&lt;/p&gt;
+
+&lt;h2 id=&#34;drawing-the-board&#34;&gt;Drawing the board&lt;/h2&gt;
+
+&lt;p&gt;I started by extracting the graphic from the tar archive I found on the wayback machine. As a side note: I created the graphics in 2000 with gimp and I can still successfully open them with the latest gimp version! You can see the game assets here: &lt;a href=&#34;https://github.com/katmatt/ishido/tree/master/assets&#34;&gt;assets&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see there, I created all variations of the stones and variations of the board tiles (with red highlighted versions for giving the player &amp;ldquo;subtle&amp;rdquo; placement hints) in separate files. These images use the png format with 8-bit indexed mode. The png format wasn&amp;rsquo;t supported by most browsers in 2000, but today every browser supports the png format. That means that we can use these images directly by creating an image html element and setting the &lt;em&gt;src&lt;/em&gt; attribute to the file name. And since I like to use the promise based &lt;em&gt;async/await&lt;/em&gt; feature with TypeScript, I ended up with this code for loading the images:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;function loadImage(src: string): Promise&amp;lt;HTMLImageElement&amp;gt; {
+    return new Promise((resolve, reject) =&amp;gt; {
+        const image = new Image()
+        image.addEventListener(&#39;load&#39;, _ =&amp;gt; resolve(image))
+        image.addEventListener(&#39;error&#39;, _ =&amp;gt; reject(new Error(`Failed to load image ${src}`)))
+        image.src = src
+    })
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This then allowed me to use a canvas html element with a fixed size of the old game resolution of &lt;em&gt;788x528&lt;/em&gt; pixels:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;header&amp;gt;
+    &amp;lt;title&amp;gt;Ishido&amp;lt;/title&amp;gt;
+    &amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset=utf-8&amp;quot; /&amp;gt;
+    &amp;lt;script type=&amp;quot;text/javascript&amp;quot; src=&amp;quot;index.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&amp;lt;/header&amp;gt;
+&amp;lt;body&amp;gt;
+    &amp;lt;h1&amp;gt;Ishido&amp;lt;/h1&amp;gt;
+
+    &amp;lt;canvas id=&amp;quot;ishido&amp;quot; width=&amp;quot;788&amp;quot; height=&amp;quot;528&amp;quot;&amp;gt;&amp;lt;/canvas&amp;gt;
+&amp;lt;/body&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This very odd size was a side effect of me using a CRT monitor with a maximum resolution of &lt;em&gt;800x600&lt;/em&gt; at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.&lt;/p&gt;
+
+&lt;p&gt;And since my plan was to avoid using any additional library, I then started with the following init function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;async function initGame() {
+    const canvas = document.getElementById(&#39;ishido&#39;)
+    const ctx = canvas.getContext(&#39;2d&#39;)
+
+    if (!ctx) {
+        alert(&amp;quot;Your browser isn&#39;t supported by this game!&amp;quot;)
+        return
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When I then started to play around with the &lt;em&gt;ctx&lt;/em&gt; graphics context, Visual Studio Code suggested me to add the following to my &lt;em&gt;tsconfig.json&lt;/em&gt; file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;compilerOptions&amp;quot;: {
+        &amp;quot;lib&amp;quot;: [
+            &amp;quot;dom&amp;quot;
+        ]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage&#34;&gt;drawImage&lt;/a&gt; method on the canvas html element. I then ended up with the following function to draw the board:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;function drawStone(ctx: CanvasRenderingContext2D, tileset: HTMLImageElement, stone: Stone, position: Position2D) {
+  const {color, symbol} = stone
+  const tileX = color * TILE_WIDTH
+  const tileY = symbol * TILE_HEIGHT
+  const {x, y} = position
+  ctx.drawImage(tileset, 
+    tileX, tileY, TILE_WIDTH, TILE_HEIGHT, 
+    x, y, TILE_WIDTH, TILE_HEIGHT)
+}
+
+function draw(ctx: CanvasRenderingContext2D, game: Game) {
+  const hintPositions = game.showHint ? game.validPositions : []
+  const {board, assets} = game
+  for (let x = 0; x &amp;lt; BOARD_WIDTH; x++) {
+    for (let y = 0; y &amp;lt; BOARD_HEIGHT; y++) {
+      const tile = board.tiles[x][y]
+      const pos = {x, y}
+      switch (tile.type) {
+        case &#39;empty&#39;: {
+          const background = board.background[x][y]
+          const hintY = hintPositions.find(equals(pos)) 
+            ? TILE_HEIGHT * 2 : 0
+          const tileY = isBeyond(pos) ? 0 : TILE_HEIGHT
+          ctx.drawImage(
+            assets.background,
+            background * TILE_WIDTH,
+            hintY + tileY,
+            TILE_WIDTH,
+            TILE_HEIGHT,
+            x * TILE_WIDTH,
+            y * TILE_HEIGHT,
+            TILE_WIDTH,
+            TILE_HEIGHT
+          )
+          break
+        }
+        case &#39;stone&#39;: {
+          drawStone(ctx, assets.tileset, tile, 
+            {x: x * TILE_WIDTH, y: y * TILE_HEIGHT})
+          break
+        }
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This function provides type-safe access to the &lt;em&gt;Stone&lt;/em&gt; properties because the typescript compiler can infer the correct type based on the &lt;em&gt;switch&lt;/em&gt; statement. This makes it quite easy to write this function.&lt;/p&gt;
+
+&lt;p&gt;But the &lt;em&gt;drawBoard&lt;/em&gt; function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;It took me a few evenings to port this old game to run in a web browser. I had a lot of fun writing the code and using typescript made it much easier for me to discover the canvas API. Since I didn&amp;rsquo;t have to care about memory management and didn&amp;rsquo;t split my source code into modules, implementing this game was very quick and fun too. And the code is much smaller than the original C++ source code! And smaller code means that the code is much easier to read. And since the game is so easy and small, I even didn&amp;rsquo;t write any tests for it!&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s how most software was written in the early 2000s: No automatic tests and if you were lucky, someone introduced a version management system like &lt;a href=&#34;https://en.wikipedia.org/wiki/Concurrent_Versions_System&#34;&gt;CVS&lt;/a&gt; to your project. git or github didn&amp;rsquo;t exist at that time! And I was very lucky that I had an &lt;a href=&#34;https://en.wikipedia.org/wiki/Extreme_programming&#34;&gt;extreme programming&lt;/a&gt; training at my first job in 2001 and since then I&amp;rsquo;m a big advocate of developers writing their tests!&lt;/p&gt;
+
+&lt;p&gt;You can find the whole source code for this game here: &lt;a href=&#34;https://github.com/katmatt/ishido&#34;&gt;https://github.com/katmatt/ishido&lt;/a&gt; and the game logic is contained in this file &lt;a href=&#34;https://github.com/katmatt/ishido/blob/master/src/index.ts&#34;&gt;index.ts&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;And without further ado, here is the resulting game and I hope you enjoy playing it too!&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&#34;text/javascript&#34; src=&#34;dist/index.js&#34;&gt;&lt;/script&gt;
+&lt;canvas id=&#34;ishido&#34; width=&#34;788&#34; height=&#34;528&#34;&gt;&lt;/canvas&gt;&lt;/p&gt;
+</description>
+     </item>
+   
+     <item>
        <title>GraalVM/native-image cross-compilation with github Actions</title>
        <link>https://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</link>
        <pubDate>Wed, 15 Jul 2020 15:35:10 +0200</pubDate>
