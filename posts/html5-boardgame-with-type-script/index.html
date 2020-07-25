@@ -138,107 +138,98 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
 <p>Since I didn&rsquo;t want to use an object-oriented approach, I decided to use tagged unions to model the tiles on the board. And to enforce this idea further, I didn&rsquo;t use the similar <em>interface</em> construct and instead settled on using the <em>type</em> construct instead.</p>
 
 <p>I started with defining a union <em>Tile</em> type, which is either an <em>EmptyTile</em> or a <em>Stone</em>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Tile</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">EmptyTile</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Stone</span>
 
-<pre><code class="language-typescript">type Tile = EmptyTile | Stone
-
-type EmptyTile = {
-    type: &quot;empty&quot;
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">EmptyTile</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;empty&#34;</span>
 }
 
-type Stone = {
-    type: &quot;stone&quot;,
-    symbol: number,
-    color: number
-}
-</code></pre>
-
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Stone</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;stone&#34;</span>,
+    <span style="color:#a6e22e">symbol</span>: <span style="color:#66d9ef">number</span>,
+    <span style="color:#a6e22e">color</span>: <span style="color:#66d9ef">number</span>
+}</code></pre></div>
 <p>And these two <em>Tile</em> subtypes have a <em>type</em> discriminator and this allows the typescript compile to infer the correct type in <em>switch</em> or <em>if</em> statements if they check the value of the <em>type</em> discriminator.</p>
 
 <p>And these types then allowed me to model the <em>Board</em> and the <em>Game</em> with the following type definition:</p>
-
-<pre><code class="language-typescript">type Board = {
-  background: number[][]
-  tiles: Tile[][]
-  nextStone?: Stone
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Board</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">background</span>: <span style="color:#66d9ef">number</span>[][]
+  <span style="color:#a6e22e">tiles</span>: <span style="color:#66d9ef">Tile</span>[][]
+  <span style="color:#a6e22e">nextStone?</span>: <span style="color:#66d9ef">Stone</span>
 }
 
-type Game = {
-  board: Board
-  stoneStack: Stone[]
-  validPositions: Position2D[]
-  score: number
-  fourWays: number
-  showHint: boolean
-  assets: Assets
-}
-</code></pre>
-
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Game</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">board</span>: <span style="color:#66d9ef">Board</span>
+  <span style="color:#a6e22e">stoneStack</span>: <span style="color:#66d9ef">Stone</span>[]
+  <span style="color:#a6e22e">validPositions</span>: <span style="color:#66d9ef">Position2D</span>[]
+  <span style="color:#a6e22e">score</span>: <span style="color:#66d9ef">number</span>
+  <span style="color:#a6e22e">fourWays</span>: <span style="color:#66d9ef">number</span>
+  <span style="color:#a6e22e">showHint</span>: <span style="color:#66d9ef">boolean</span>
+  <span style="color:#a6e22e">assets</span>: <span style="color:#66d9ef">Assets</span>
+}</code></pre></div>
 <p>And as I said earlier, I didn&rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.</p>
 
 <p>For checking the valid positions for a given stone I again used a tagged union type:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">MatchResult</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">NotMatching</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Match</span>
 
-<pre><code class="language-typescript">type MatchResult = NotMatching | Match
-
-type NotMatching = {
-  type: 'NotMatching'
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">NotMatching</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;NotMatching&#39;</span>
 }
 
-type Match = {
-  type: 'Match'
-  colorMatches: number
-  symbolMatches: number
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Match</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Match&#39;</span>
+  <span style="color:#a6e22e">colorMatches</span>: <span style="color:#66d9ef">number</span>
+  <span style="color:#a6e22e">symbolMatches</span>: <span style="color:#66d9ef">number</span>
 }
 
-function match(s1: Stone, s2: Tile): MatchResult {
-  if (s2.type == 'empty') {
-    return {
-      type: 'Match',
-      colorMatches: 0,
-      symbolMatches: 0,
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">match</span>(<span style="color:#a6e22e">s1</span>: <span style="color:#66d9ef">Stone</span>, <span style="color:#a6e22e">s2</span>: <span style="color:#66d9ef">Tile</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">MatchResult</span> {
+  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">s2</span>.<span style="color:#a6e22e">type</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;empty&#39;</span>) {
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Match&#39;</span>,
+      <span style="color:#a6e22e">colorMatches</span>: <span style="color:#66d9ef">0</span>,
+      <span style="color:#a6e22e">symbolMatches</span>: <span style="color:#66d9ef">0</span>,
     }
   }
-  const colorMatch = s1.color === s2.color
-  const symbolMatch = s1.symbol === s2.symbol
-  if (colorMatch || symbolMatch) {
-    return {
-      type: 'Match',
-      colorMatches: colorMatch ? 1 : 0,
-      symbolMatches: symbolMatch ? 1 : 0,
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">colorMatch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">s1</span>.<span style="color:#a6e22e">color</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">s2</span>.<span style="color:#a6e22e">color</span>
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">symbolMatch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">s1</span>.<span style="color:#a6e22e">symbol</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">s2</span>.<span style="color:#a6e22e">symbol</span>
+  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">colorMatch</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">symbolMatch</span>) {
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Match&#39;</span>,
+      <span style="color:#a6e22e">colorMatches</span>: <span style="color:#66d9ef">colorMatch</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">1</span> : <span style="color:#66d9ef">0</span>,
+      <span style="color:#a6e22e">symbolMatches</span>: <span style="color:#66d9ef">symbolMatch</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">1</span> : <span style="color:#66d9ef">0</span>,
     }
   }
-  return {
-    type: 'NotMatching',
+  <span style="color:#66d9ef">return</span> {
+    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;NotMatching&#39;</span>,
   }
 }
 
-function getMatchResults(board: Board, position: Position2D) {
-  const {nextStone, tiles} = board
-  const {x, y} = position
-  const matchResults: MatchResult[] = []
-  if (nextStone) {
-    if (tiles[x][y].type === 'empty') {
-      if (x &gt; 0) {
-        const left = tiles[x - 1][y]
-        matchResults.push(match(nextStone, left))
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getMatchResults</span>(<span style="color:#a6e22e">board</span>: <span style="color:#66d9ef">Board</span>, <span style="color:#a6e22e">position</span>: <span style="color:#66d9ef">Position2D</span>) {
+  <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">nextStone</span>, <span style="color:#a6e22e">tiles</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">board</span>
+  <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">position</span>
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">matchResults</span>: <span style="color:#66d9ef">MatchResult</span>[] <span style="color:#f92672">=</span> []
+  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">nextStone</span>) {
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span>][<span style="color:#a6e22e">y</span>].<span style="color:#a6e22e">type</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;empty&#39;</span>) {
+      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>][<span style="color:#a6e22e">y</span>]
+        <span style="color:#a6e22e">matchResults</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">match</span>(<span style="color:#a6e22e">nextStone</span>, <span style="color:#a6e22e">left</span>))
       }
-      if (x &lt; BOARD_WIDTH - 1) {
-        const right = tiles[x + 1][y]
-        matchResults.push(match(nextStone, right))
+      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">BOARD_WIDTH</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>][<span style="color:#a6e22e">y</span>]
+        <span style="color:#a6e22e">matchResults</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">match</span>(<span style="color:#a6e22e">nextStone</span>, <span style="color:#a6e22e">right</span>))
       }
-      if (y &gt; 0) {
-        const top = tiles[x][y - 1]
-        matchResults.push(match(nextStone, top))
+      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">y</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">top</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span>][<span style="color:#a6e22e">y</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]
+        <span style="color:#a6e22e">matchResults</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">match</span>(<span style="color:#a6e22e">nextStone</span>, <span style="color:#a6e22e">top</span>))
       }
-      if (y &lt; BOARD_HEIGHT - 1) {
-        const bottom = tiles[x][y + 1]
-        matchResults.push(match(nextStone, bottom))
+      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">y</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">BOARD_HEIGHT</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">bottom</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span>][<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]
+        <span style="color:#a6e22e">matchResults</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">match</span>(<span style="color:#a6e22e">nextStone</span>, <span style="color:#a6e22e">bottom</span>))
       }
     }
   }
-  return matchResults
-}
-</code></pre>
-
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">matchResults</span>
+}</code></pre></div>
 <p>And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!</p>
 
 <h2 id="drawing-the-board">Drawing the board</h2>
@@ -246,107 +237,92 @@ function getMatchResults(board: Board, position: Position2D) {
 <p>I started by extracting the graphic from the tar archive I found on the wayback machine. As a side note: I created the graphics in 2000 with gimp and I can still successfully open them with the latest gimp version! You can see the game assets here: <a href="https://github.com/katmatt/ishido/tree/master/assets">assets</a></p>
 
 <p>As you can see there, I created all variations of the stones and variations of the board tiles (with red highlighted versions for giving the player &ldquo;subtle&rdquo; placement hints) in separate files. These images use the png format with 8-bit indexed mode. The png format wasn&rsquo;t supported by most browsers in 2000, but today every browser supports the png format. That means that we can use these images directly by creating an image html element and setting the <em>src</em> attribute to the file name. And since I like to use the promise based <em>async/await</em> feature with TypeScript, I ended up with this code for loading the images:</p>
-
-<pre><code class="language-typescript">function loadImage(src: string): Promise&lt;HTMLImageElement&gt; {
-    return new Promise((resolve, reject) =&gt; {
-        const image = new Image()
-        image.addEventListener('load', _ =&gt; resolve(image))
-        image.addEventListener('error', _ =&gt; reject(new Error(`Failed to load image ${src}`)))
-        image.src = src
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">loadImage</span>(<span style="color:#a6e22e">src</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">HTMLImageElement</span><span style="color:#f92672">&gt;</span> {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Promise</span>((<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Image</span>()
+        <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">addEventListener</span>(<span style="color:#e6db74">&#39;load&#39;</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">image</span>))
+        <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">addEventListener</span>(<span style="color:#e6db74">&#39;error&#39;</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">reject</span>(<span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`Failed to load image </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">src</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)))
+        <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">src</span>
     })
-}
-</code></pre>
-
+}</code></pre></div>
 <p>This then allowed me to use a canvas html element with a fixed size of the old game resolution of <em>788x528</em> pixels:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html"><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color:#f92672">header</span>&gt;
+    &lt;<span style="color:#f92672">title</span>&gt;Ishido&lt;/<span style="color:#f92672">title</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">http-equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Content-Type&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/html; charset=utf-8&#34;</span> /&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;index.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+&lt;/<span style="color:#f92672">header</span>&gt;
+&lt;<span style="color:#f92672">body</span>&gt;
+    &lt;<span style="color:#f92672">h1</span>&gt;Ishido&lt;/<span style="color:#f92672">h1</span>&gt;
 
-<pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;header&gt;
-    &lt;title&gt;Ishido&lt;/title&gt;
-    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;
-    &lt;script type=&quot;text/javascript&quot; src=&quot;index.js&quot;&gt;&lt;/script&gt;
-&lt;/header&gt;
-&lt;body&gt;
-    &lt;h1&gt;Ishido&lt;/h1&gt;
-
-    &lt;canvas id=&quot;ishido&quot; width=&quot;788&quot; height=&quot;528&quot;&gt;&lt;/canvas&gt;
-&lt;/body&gt;
-</code></pre>
-
+    &lt;<span style="color:#f92672">canvas</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ishido&#34;</span> <span style="color:#a6e22e">width</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;788&#34;</span> <span style="color:#a6e22e">height</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;528&#34;</span>&gt;&lt;/<span style="color:#f92672">canvas</span>&gt;
+&lt;/<span style="color:#f92672">body</span>&gt;</code></pre></div>
 <p>This very odd size was a side effect of me using a CRT monitor with a maximum resolution of <em>800x600</em> at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.</p>
 
 <p>And since my plan was to avoid using any additional library, I then started with the following init function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initGame() {</span>
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">canvas</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#e6db74">&#39;ishido&#39;</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ctx</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">canvas</span>.<span style="color:#a6e22e">getContext</span>(<span style="color:#e6db74">&#39;2d&#39;</span>)
 
-<pre><code class="language-typescript">async function initGame() {
-    const canvas = document.getElementById('ishido')
-    const ctx = canvas.getContext('2d')
-
-    if (!ctx) {
-        alert(&quot;Your browser isn't supported by this game!&quot;)
-        return
+    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">ctx</span>) {
+        <span style="color:#a6e22e">alert</span>(<span style="color:#e6db74">&#34;Your browser isn&#39;t supported by this game!&#34;</span>)
+        <span style="color:#66d9ef">return</span>
     }
-}
-</code></pre>
-
+}</code></pre></div>
 <p>When I then started to play around with the <em>ctx</em> graphics context, Visual Studio Code suggested me to add the following to my <em>tsconfig.json</em> file:</p>
-
-<pre><code class="language-json">{
-    &quot;compilerOptions&quot;: {
-        &quot;lib&quot;: [
-            &quot;dom&quot;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;compilerOptions&#34;</span>: {
+        <span style="color:#f92672">&#34;lib&#34;</span>: [
+            <span style="color:#e6db74">&#34;dom&#34;</span>
         ]
     }
-}
-</code></pre>
-
+}</code></pre></div>
 <p>And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage">drawImage</a> method on the canvas html element. I then ended up with the following function to draw the board:</p>
-
-<pre><code class="language-typescript">function drawStone(ctx: CanvasRenderingContext2D, tileset: HTMLImageElement, stone: Stone, position: Position2D) {
-  const {color, symbol} = stone
-  const tileX = color * TILE_WIDTH
-  const tileY = symbol * TILE_HEIGHT
-  const {x, y} = position
-  ctx.drawImage(tileset, 
-    tileX, tileY, TILE_WIDTH, TILE_HEIGHT, 
-    x, y, TILE_WIDTH, TILE_HEIGHT)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">drawStone</span>(<span style="color:#a6e22e">ctx</span>: <span style="color:#66d9ef">CanvasRenderingContext2D</span>, <span style="color:#a6e22e">tileset</span>: <span style="color:#66d9ef">HTMLImageElement</span>, <span style="color:#a6e22e">stone</span>: <span style="color:#66d9ef">Stone</span>, <span style="color:#a6e22e">position</span>: <span style="color:#66d9ef">Position2D</span>) {
+  <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">color</span>, <span style="color:#a6e22e">symbol</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">stone</span>
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tileX</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">color</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_WIDTH</span>
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tileY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">symbol</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_HEIGHT</span>
+  <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">position</span>
+  <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">drawImage</span>(<span style="color:#a6e22e">tileset</span>, 
+    <span style="color:#a6e22e">tileX</span>, <span style="color:#a6e22e">tileY</span>, <span style="color:#a6e22e">TILE_WIDTH</span>, <span style="color:#a6e22e">TILE_HEIGHT</span>, 
+    <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">TILE_WIDTH</span>, <span style="color:#a6e22e">TILE_HEIGHT</span>)
 }
 
-function draw(ctx: CanvasRenderingContext2D, game: Game) {
-  const hintPositions = game.showHint ? game.validPositions : []
-  const {board, assets} = game
-  for (let x = 0; x &lt; BOARD_WIDTH; x++) {
-    for (let y = 0; y &lt; BOARD_HEIGHT; y++) {
-      const tile = board.tiles[x][y]
-      const pos = {x, y}
-      switch (tile.type) {
-        case 'empty': {
-          const background = board.background[x][y]
-          const hintY = hintPositions.find(equals(pos)) 
-            ? TILE_HEIGHT * 2 : 0
-          const tileY = isBeyond(pos) ? 0 : TILE_HEIGHT
-          ctx.drawImage(
-            assets.background,
-            background * TILE_WIDTH,
-            hintY + tileY,
-            TILE_WIDTH,
-            TILE_HEIGHT,
-            x * TILE_WIDTH,
-            y * TILE_HEIGHT,
-            TILE_WIDTH,
-            TILE_HEIGHT
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">draw</span>(<span style="color:#a6e22e">ctx</span>: <span style="color:#66d9ef">CanvasRenderingContext2D</span>, <span style="color:#a6e22e">game</span>: <span style="color:#66d9ef">Game</span>) {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hintPositions</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">game</span>.<span style="color:#a6e22e">showHint</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">game</span>.<span style="color:#a6e22e">validPositions</span> <span style="color:#f92672">:</span> []
+  <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">board</span>, <span style="color:#a6e22e">assets</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">game</span>
+  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">x</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">BOARD_WIDTH</span>; <span style="color:#a6e22e">x</span><span style="color:#f92672">++</span>) {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">y</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">BOARD_HEIGHT</span>; <span style="color:#a6e22e">y</span><span style="color:#f92672">++</span>) {
+      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tile</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">board</span>.<span style="color:#a6e22e">tiles</span>[<span style="color:#a6e22e">x</span>][<span style="color:#a6e22e">y</span>]
+      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pos</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>}
+      <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">tile</span>.<span style="color:#a6e22e">type</span>) {
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;empty&#39;</span><span style="color:#f92672">:</span> {
+          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">background</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">board</span>.<span style="color:#a6e22e">background</span>[<span style="color:#a6e22e">x</span>][<span style="color:#a6e22e">y</span>]
+          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hintY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">hintPositions</span>.<span style="color:#a6e22e">find</span>(<span style="color:#a6e22e">equals</span>(<span style="color:#a6e22e">pos</span>)) 
+            <span style="color:#f92672">?</span> <span style="color:#a6e22e">TILE_HEIGHT</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">2</span> : <span style="color:#66d9ef">0</span>
+          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tileY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">isBeyond</span>(<span style="color:#a6e22e">pos</span>) <span style="color:#f92672">?</span> <span style="color:#a6e22e">0</span> : <span style="color:#66d9ef">TILE_HEIGHT</span>
+          <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">drawImage</span>(
+            <span style="color:#a6e22e">assets</span>.<span style="color:#a6e22e">background</span>,
+            <span style="color:#a6e22e">background</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_WIDTH</span>,
+            <span style="color:#a6e22e">hintY</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">tileY</span>,
+            <span style="color:#a6e22e">TILE_WIDTH</span>,
+            <span style="color:#a6e22e">TILE_HEIGHT</span>,
+            <span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_WIDTH</span>,
+            <span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_HEIGHT</span>,
+            <span style="color:#a6e22e">TILE_WIDTH</span>,
+            <span style="color:#a6e22e">TILE_HEIGHT</span>
           )
-          break
+          <span style="color:#66d9ef">break</span>
         }
-        case 'stone': {
-          drawStone(ctx, assets.tileset, tile, 
-            {x: x * TILE_WIDTH, y: y * TILE_HEIGHT})
-          break
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;stone&#39;</span><span style="color:#f92672">:</span> {
+          <span style="color:#a6e22e">drawStone</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">assets</span>.<span style="color:#a6e22e">tileset</span>, <span style="color:#a6e22e">tile</span>, 
+            {<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_WIDTH</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_HEIGHT</span>})
+          <span style="color:#66d9ef">break</span>
         }
       }
     }
   }
-}
-</code></pre>
-
+}</code></pre></div>
 <p>This function provides type-safe access to the <em>Stone</em> properties because the typescript compiler can infer the correct type based on the <em>switch</em> statement. This makes it quite easy to write this function.</p>
 
 <p>But the <em>draw</em> function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.</p>

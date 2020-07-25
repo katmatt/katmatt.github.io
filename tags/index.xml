@@ -36,107 +36,98 @@
 &lt;p&gt;Since I didn&amp;rsquo;t want to use an object-oriented approach, I decided to use tagged unions to model the tiles on the board. And to enforce this idea further, I didn&amp;rsquo;t use the similar &lt;em&gt;interface&lt;/em&gt; construct and instead settled on using the &lt;em&gt;type&lt;/em&gt; construct instead.&lt;/p&gt;
 
 &lt;p&gt;I started with defining a union &lt;em&gt;Tile&lt;/em&gt; type, which is either an &lt;em&gt;EmptyTile&lt;/em&gt; or a &lt;em&gt;Stone&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Tile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;EmptyTile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Stone&lt;/span&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type Tile = EmptyTile | Stone
-
-type EmptyTile = {
-    type: &amp;quot;empty&amp;quot;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;EmptyTile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;empty&amp;#34;&lt;/span&gt;
 }
 
-type Stone = {
-    type: &amp;quot;stone&amp;quot;,
-    symbol: number,
-    color: number
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Stone&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;stone&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;,
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And these two &lt;em&gt;Tile&lt;/em&gt; subtypes have a &lt;em&gt;type&lt;/em&gt; discriminator and this allows the typescript compile to infer the correct type in &lt;em&gt;switch&lt;/em&gt; or &lt;em&gt;if&lt;/em&gt; statements if they check the value of the &lt;em&gt;type&lt;/em&gt; discriminator.&lt;/p&gt;
 
 &lt;p&gt;And these types then allowed me to model the &lt;em&gt;Board&lt;/em&gt; and the &lt;em&gt;Game&lt;/em&gt; with the following type definition:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type Board = {
-  background: number[][]
-  tiles: Tile[][]
-  nextStone?: Stone
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Board&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;[][]
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Tile&lt;/span&gt;[][]
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone?&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Stone&lt;/span&gt;
 }
 
-type Game = {
-  board: Board
-  stoneStack: Stone[]
-  validPositions: Position2D[]
-  score: number
-  fourWays: number
-  showHint: boolean
-  assets: Assets
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Game&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Board&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;stoneStack&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Stone&lt;/span&gt;[]
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;validPositions&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Position2D&lt;/span&gt;[]
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;fourWays&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;showHint&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;boolean&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;assets&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Assets&lt;/span&gt;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And as I said earlier, I didn&amp;rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.&lt;/p&gt;
 
 &lt;p&gt;For checking the valid positions for a given stone I again used a tagged union type:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MatchResult&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;NotMatching&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Match&lt;/span&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;type MatchResult = NotMatching | Match
-
-type NotMatching = {
-  type: &#39;NotMatching&#39;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;NotMatching&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;NotMatching&amp;#39;&lt;/span&gt;
 }
 
-type Match = {
-  type: &#39;Match&#39;
-  colorMatches: number
-  symbolMatches: number
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Match&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Match&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;colorMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;symbolMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
 }
 
-function match(s1: Stone, s2: Tile): MatchResult {
-  if (s2.type == &#39;empty&#39;) {
-    return {
-      type: &#39;Match&#39;,
-      colorMatches: 0,
-      symbolMatches: 0,
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;match&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;s1&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Stone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;s2&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Tile&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MatchResult&lt;/span&gt; {
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;s2&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;empty&amp;#39;&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; {
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Match&amp;#39;&lt;/span&gt;,
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;colorMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;0&lt;/span&gt;,
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;symbolMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;0&lt;/span&gt;,
     }
   }
-  const colorMatch = s1.color === s2.color
-  const symbolMatch = s1.symbol === s2.symbol
-  if (colorMatch || symbolMatch) {
-    return {
-      type: &#39;Match&#39;,
-      colorMatches: colorMatch ? 1 : 0,
-      symbolMatches: symbolMatch ? 1 : 0,
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;colorMatch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;s1&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;===&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;s2&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;symbolMatch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;s1&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;===&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;s2&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;colorMatch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;symbolMatch&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; {
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Match&amp;#39;&lt;/span&gt;,
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;colorMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;colorMatch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;1&lt;/span&gt; : &lt;span style=&#34;color:#66d9ef&#34;&gt;0&lt;/span&gt;,
+      &lt;span style=&#34;color:#a6e22e&#34;&gt;symbolMatches&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;symbolMatch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;1&lt;/span&gt; : &lt;span style=&#34;color:#66d9ef&#34;&gt;0&lt;/span&gt;,
     }
   }
-  return {
-    type: &#39;NotMatching&#39;,
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;NotMatching&amp;#39;&lt;/span&gt;,
   }
 }
 
-function getMatchResults(board: Board, position: Position2D) {
-  const {nextStone, tiles} = board
-  const {x, y} = position
-  const matchResults: MatchResult[] = []
-  if (nextStone) {
-    if (tiles[x][y].type === &#39;empty&#39;) {
-      if (x &amp;gt; 0) {
-        const left = tiles[x - 1][y]
-        matchResults.push(match(nextStone, left))
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;getMatchResults&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Board&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;position&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Position2D&lt;/span&gt;) {
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;position&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;MatchResult&lt;/span&gt;[] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;===&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;empty&amp;#39;&lt;/span&gt;) {
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;left&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;]
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;push&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;match&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;left&lt;/span&gt;))
       }
-      if (x &amp;lt; BOARD_WIDTH - 1) {
-        const right = tiles[x + 1][y]
-        matchResults.push(match(nextStone, right))
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BOARD_WIDTH&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;right&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;]
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;push&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;match&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;right&lt;/span&gt;))
       }
-      if (y &amp;gt; 0) {
-        const top = tiles[x][y - 1]
-        matchResults.push(match(nextStone, top))
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;top&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;]
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;push&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;match&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;top&lt;/span&gt;))
       }
-      if (y &amp;lt; BOARD_HEIGHT - 1) {
-        const bottom = tiles[x][y + 1]
-        matchResults.push(match(nextStone, bottom))
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BOARD_HEIGHT&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;bottom&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;]
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;push&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;match&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;nextStone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;bottom&lt;/span&gt;))
       }
     }
   }
-  return matchResults
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&amp;rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!&lt;/p&gt;
 
 &lt;h2 id=&#34;drawing-the-board&#34;&gt;Drawing the board&lt;/h2&gt;
@@ -144,107 +135,92 @@ function getMatchResults(board: Board, position: Position2D) {
 &lt;p&gt;I started by extracting the graphic from the tar archive I found on the wayback machine. As a side note: I created the graphics in 2000 with gimp and I can still successfully open them with the latest gimp version! You can see the game assets here: &lt;a href=&#34;https://github.com/katmatt/ishido/tree/master/assets&#34;&gt;assets&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;As you can see there, I created all variations of the stones and variations of the board tiles (with red highlighted versions for giving the player &amp;ldquo;subtle&amp;rdquo; placement hints) in separate files. These images use the png format with 8-bit indexed mode. The png format wasn&amp;rsquo;t supported by most browsers in 2000, but today every browser supports the png format. That means that we can use these images directly by creating an image html element and setting the &lt;em&gt;src&lt;/em&gt; attribute to the file name. And since I like to use the promise based &lt;em&gt;async/await&lt;/em&gt; feature with TypeScript, I ended up with this code for loading the images:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;function loadImage(src: string): Promise&amp;lt;HTMLImageElement&amp;gt; {
-    return new Promise((resolve, reject) =&amp;gt; {
-        const image = new Image()
-        image.addEventListener(&#39;load&#39;, _ =&amp;gt; resolve(image))
-        image.addEventListener(&#39;error&#39;, _ =&amp;gt; reject(new Error(`Failed to load image ${src}`)))
-        image.src = src
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loadImage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Promise&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;HTMLImageElement&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Promise&lt;/span&gt;((&lt;span style=&#34;color:#a6e22e&#34;&gt;resolve&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;reject&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Image&lt;/span&gt;()
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;addEventListener&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;load&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;resolve&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;))
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;addEventListener&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;error&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reject&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`Failed to load image &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)))
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;
     })
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This then allowed me to use a canvas html element with a fixed size of the old game resolution of &lt;em&gt;788x528&lt;/em&gt; pixels:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;header&lt;/span&gt;&amp;gt;
+    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;title&lt;/span&gt;&amp;gt;Ishido&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;title&lt;/span&gt;&amp;gt;
+    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;meta&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;http-equiv&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;content&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;text/html; charset=utf-8&amp;#34;&lt;/span&gt; /&amp;gt;
+    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;script&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;text/javascript&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;index.js&amp;#34;&lt;/span&gt;&amp;gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;script&lt;/span&gt;&amp;gt;
+&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;header&lt;/span&gt;&amp;gt;
+&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Ishido&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;!DOCTYPE html&amp;gt;
-&amp;lt;header&amp;gt;
-    &amp;lt;title&amp;gt;Ishido&amp;lt;/title&amp;gt;
-    &amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset=utf-8&amp;quot; /&amp;gt;
-    &amp;lt;script type=&amp;quot;text/javascript&amp;quot; src=&amp;quot;index.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
-&amp;lt;/header&amp;gt;
-&amp;lt;body&amp;gt;
-    &amp;lt;h1&amp;gt;Ishido&amp;lt;/h1&amp;gt;
-
-    &amp;lt;canvas id=&amp;quot;ishido&amp;quot; width=&amp;quot;788&amp;quot; height=&amp;quot;528&amp;quot;&amp;gt;&amp;lt;/canvas&amp;gt;
-&amp;lt;/body&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
+    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;canvas&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ishido&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;width&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;788&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;height&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;528&amp;#34;&lt;/span&gt;&amp;gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;canvas&lt;/span&gt;&amp;gt;
+&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This very odd size was a side effect of me using a CRT monitor with a maximum resolution of &lt;em&gt;800x600&lt;/em&gt; at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.&lt;/p&gt;
 
 &lt;p&gt;And since my plan was to avoid using any additional library, I then started with the following init function:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;initGame() {&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;canvas&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; document.&lt;span style=&#34;color:#a6e22e&#34;&gt;getElementById&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ishido&amp;#39;&lt;/span&gt;)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;canvas&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;getContext&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2d&amp;#39;&lt;/span&gt;)
 
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;async function initGame() {
-    const canvas = document.getElementById(&#39;ishido&#39;)
-    const ctx = canvas.getContext(&#39;2d&#39;)
-
-    if (!ctx) {
-        alert(&amp;quot;Your browser isn&#39;t supported by this game!&amp;quot;)
-        return
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;) {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;alert&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Your browser isn&amp;#39;t supported by this game!&amp;#34;&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
     }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;When I then started to play around with the &lt;em&gt;ctx&lt;/em&gt; graphics context, Visual Studio Code suggested me to add the following to my &lt;em&gt;tsconfig.json&lt;/em&gt; file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
-    &amp;quot;compilerOptions&amp;quot;: {
-        &amp;quot;lib&amp;quot;: [
-            &amp;quot;dom&amp;quot;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;compilerOptions&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;lib&amp;#34;&lt;/span&gt;: [
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;dom&amp;#34;&lt;/span&gt;
         ]
     }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage&#34;&gt;drawImage&lt;/a&gt; method on the canvas html element. I then ended up with the following function to draw the board:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;function drawStone(ctx: CanvasRenderingContext2D, tileset: HTMLImageElement, stone: Stone, position: Position2D) {
-  const {color, symbol} = stone
-  const tileX = color * TILE_WIDTH
-  const tileY = symbol * TILE_HEIGHT
-  const {x, y} = position
-  ctx.drawImage(tileset, 
-    tileX, tileY, TILE_WIDTH, TILE_HEIGHT, 
-    x, y, TILE_WIDTH, TILE_HEIGHT)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;drawStone&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;CanvasRenderingContext2D&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tileset&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;HTMLImageElement&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;stone&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Stone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;position&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Position2D&lt;/span&gt;) {
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stone&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tileX&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tileY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;position&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;drawImage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;tileset&lt;/span&gt;, 
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;tileX&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tileY&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;, 
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;)
 }
 
-function draw(ctx: CanvasRenderingContext2D, game: Game) {
-  const hintPositions = game.showHint ? game.validPositions : []
-  const {board, assets} = game
-  for (let x = 0; x &amp;lt; BOARD_WIDTH; x++) {
-    for (let y = 0; y &amp;lt; BOARD_HEIGHT; y++) {
-      const tile = board.tiles[x][y]
-      const pos = {x, y}
-      switch (tile.type) {
-        case &#39;empty&#39;: {
-          const background = board.background[x][y]
-          const hintY = hintPositions.find(equals(pos)) 
-            ? TILE_HEIGHT * 2 : 0
-          const tileY = isBeyond(pos) ? 0 : TILE_HEIGHT
-          ctx.drawImage(
-            assets.background,
-            background * TILE_WIDTH,
-            hintY + tileY,
-            TILE_WIDTH,
-            TILE_HEIGHT,
-            x * TILE_WIDTH,
-            y * TILE_HEIGHT,
-            TILE_WIDTH,
-            TILE_HEIGHT
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;draw&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;CanvasRenderingContext2D&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;game&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Game&lt;/span&gt;) {
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hintPositions&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;game&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;showHint&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;game&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;validPositions&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; []
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;assets&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;game&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BOARD_WIDTH&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;++&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BOARD_HEIGHT&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;++&lt;/span&gt;) {
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;tiles&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;]
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;pos&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;}
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;switch&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;tile&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;empty&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;board&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;][&lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;]
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hintY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hintPositions&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;find&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;equals&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;pos&lt;/span&gt;)) 
+            &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;2&lt;/span&gt; : &lt;span style=&#34;color:#66d9ef&#34;&gt;0&lt;/span&gt;
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tileY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;isBeyond&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;pos&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;0&lt;/span&gt; : &lt;span style=&#34;color:#66d9ef&#34;&gt;TILE_HEIGHT&lt;/span&gt;
+          &lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;drawImage&lt;/span&gt;(
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;assets&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;hintY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tileY&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;
           )
-          break
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
         }
-        case &#39;stone&#39;: {
-          drawStone(ctx, assets.tileset, tile, 
-            {x: x * TILE_WIDTH, y: y * TILE_HEIGHT})
-          break
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;stone&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+          &lt;span style=&#34;color:#a6e22e&#34;&gt;drawStone&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;assets&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;tileset&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tile&lt;/span&gt;, 
+            {&lt;span style=&#34;color:#a6e22e&#34;&gt;x&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;y&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_HEIGHT&lt;/span&gt;})
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
         }
       }
     }
   }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This function provides type-safe access to the &lt;em&gt;Stone&lt;/em&gt; properties because the typescript compiler can infer the correct type based on the &lt;em&gt;switch&lt;/em&gt; statement. This makes it quite easy to write this function.&lt;/p&gt;
 
 &lt;p&gt;But the &lt;em&gt;draw&lt;/em&gt; function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.&lt;/p&gt;
@@ -281,24 +257,18 @@ function draw(ctx: CanvasRenderingContext2D, game: Game) {
 &lt;h2 id=&#34;setup-your-gradle-build&#34;&gt;Setup your gradle build&lt;/h2&gt;
 
 &lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin central and this makes it very easy to integrate it into our &lt;em&gt;gradle.build&lt;/em&gt; file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;plugins {
-    id &#39;com.palantir.graal&#39; version &#39;0.7.1&#39;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;plugins &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+    id &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.palantir.graal&amp;#39;&lt;/span&gt; version &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;0.7.1&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then you can add the following entries to your modules &lt;em&gt;build.gradle&lt;/em&gt; to configure the &lt;em&gt;nativeImage&lt;/em&gt; gradle task:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;apply plugin: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.palantir.graal&amp;#39;&lt;/span&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;apply plugin: &#39;com.palantir.graal&#39;
-
-graal {
-    graalVersion &#39;20.0.0&#39;
-    outputName &#39;cross-compile-demo&#39;
-    mainClass &#39;com.maschinenstuermer.crosscompile.demo.App&#39;
-    javaVersion &#39;11&#39;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+graal &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+    graalVersion &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;20.0.0&amp;#39;&lt;/span&gt;
+    outputName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cross-compile-demo&amp;#39;&lt;/span&gt;
+    mainClass &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.maschinenstuermer.crosscompile.demo.App&amp;#39;&lt;/span&gt;
+    javaVersion &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;11&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;build-your-first-native-executable&#34;&gt;Build your first native executable&lt;/h2&gt;
 
 &lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute &lt;em&gt;native-image&lt;/em&gt; and generate the executable to &lt;em&gt;build/graal/cross-compile-demo&lt;/em&gt;.&lt;/p&gt;
@@ -309,32 +279,25 @@ graal {
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our &lt;em&gt;build.gradle&lt;/em&gt; file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;task zipExecutable(type: Zip) {
-    dependsOn &#39;nativeImage&#39;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;task &lt;span style=&#34;color:#a6e22e&#34;&gt;zipExecutable&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;type: Zip&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+    dependsOn &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;nativeImage&amp;#39;&lt;/span&gt;
     
-    archiveFileName = &amp;quot;cross-compile-demo.zip&amp;quot;
-    destinationDirectory = file(&amp;quot;$buildDir/dist&amp;quot;)
+    archiveFileName &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cross-compile-demo.zip&amp;#34;&lt;/span&gt;
+    destinationDirectory &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; file&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$buildDir/dist&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 
-    from &amp;quot;$buildDir/graal&amp;quot; 
-}
-&lt;/code&gt;&lt;/pre&gt;
-
+    from &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$buildDir/graal&amp;#34;&lt;/span&gt; 
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;With this additional task, we can now build and archive our executable by running &lt;code&gt;./gradlew zipExecutable&lt;/code&gt;. This produces our zip file in the &lt;em&gt;build/dist&lt;/em&gt; folder. You can see the full build file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle&#34;&gt;build.gradle&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;cross-compiling-with-github-actions&#34;&gt;Cross-compiling with Github Actions&lt;/h2&gt;
 
 &lt;p&gt;Our release process is triggered when a user tags a release and pushes these tags to github. This is accomplished with the following trigger in our workflow file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;on:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;on:
   push:
     tags:
-    - &#39;v*&#39; # Push events to matching v*, i.e. v1.0, v20.15.10
-&lt;/code&gt;&lt;/pre&gt;
-
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;v*&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Push events to matching v*, i.e. v1.0, v20.15.10&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Our workflow then creates a github release for this tag and stores the &lt;em&gt;upload_url&lt;/em&gt; variable as an output that our downstream jobs can use to upload their artifacts with the following job definition :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;jobs:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;jobs:
   create-release:
     runs-on: ubuntu-latest
     outputs:
@@ -349,21 +312,18 @@ graal {
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-&lt;/code&gt;&lt;/pre&gt;
-
+          draft: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+          prerelease: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We now add jobs for each supported operating system, which depends on our &lt;em&gt;create-release&lt;/em&gt; job by setting the &lt;em&gt;needs:&lt;/em&gt; facet to &lt;em&gt;create-release&lt;/em&gt;. The following workflow defines the release build for linux:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;  perform-release-linux:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;  perform-release-linux:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up JDK &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
       uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build native image with Gradle
@@ -376,9 +336,7 @@ graal {
         upload_url: ${{ needs.create-release.outputs.upload_url }}  
         asset_path: ./build/dist/cross-compile-demo.zip
         asset_name: cross-compile-demo_linux_amd64.zip
-        asset_content_type: application/zip
-&lt;/code&gt;&lt;/pre&gt;
-
+        asset_content_type: application/zip&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And this job references the &lt;em&gt;upload_url&lt;/em&gt; output from our &lt;em&gt;create-release&lt;/em&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
 You can see the full workflow file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml&#34;&gt;perform-release.yml&lt;/a&gt;&lt;/p&gt;
 

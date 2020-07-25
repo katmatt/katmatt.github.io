@@ -131,24 +131,18 @@
 <h2 id="setup-your-gradle-build">Setup your gradle build</h2>
 
 <p>In this article,  we will use the popular <a href="https://gradle.org/">gradle</a> build tool together with the <a href="https://github.com/palantir/gradle-graal">Palantir GraalVM gradle plugin</a>. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin central and this makes it very easy to integrate it into our <em>gradle.build</em> file:</p>
-
-<pre><code class="language-gradle">plugins {
-    id 'com.palantir.graal' version '0.7.1'
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-gradle" data-lang="gradle">plugins <span style="color:#f92672">{</span>
+    id <span style="color:#e6db74">&#39;com.palantir.graal&#39;</span> version <span style="color:#e6db74">&#39;0.7.1&#39;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>Then you can add the following entries to your modules <em>build.gradle</em> to configure the <em>nativeImage</em> gradle task:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-gradle" data-lang="gradle">apply plugin: <span style="color:#e6db74">&#39;com.palantir.graal&#39;</span>
 
-<pre><code class="language-gradle">apply plugin: 'com.palantir.graal'
-
-graal {
-    graalVersion '20.0.0'
-    outputName 'cross-compile-demo'
-    mainClass 'com.maschinenstuermer.crosscompile.demo.App'
-    javaVersion '11'
-}
-</code></pre>
-
+graal <span style="color:#f92672">{</span>
+    graalVersion <span style="color:#e6db74">&#39;20.0.0&#39;</span>
+    outputName <span style="color:#e6db74">&#39;cross-compile-demo&#39;</span>
+    mainClass <span style="color:#e6db74">&#39;com.maschinenstuermer.crosscompile.demo.App&#39;</span>
+    javaVersion <span style="color:#e6db74">&#39;11&#39;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <h2 id="build-your-first-native-executable">Build your first native executable</h2>
 
 <p>After this setup, building your first native executable is as simple as running <code>./gradlew nativeImage</code>. This will download the graal toolchain to your computer, execute <em>native-image</em> and generate the executable to <em>build/graal/cross-compile-demo</em>.</p>
@@ -159,32 +153,25 @@ graal {
 </code></pre>
 
 <p>The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our <em>build.gradle</em> file:</p>
-
-<pre><code class="language-gradle">task zipExecutable(type: Zip) {
-    dependsOn 'nativeImage'
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-gradle" data-lang="gradle">task <span style="color:#a6e22e">zipExecutable</span><span style="color:#f92672">(</span>type: Zip<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    dependsOn <span style="color:#e6db74">&#39;nativeImage&#39;</span>
     
-    archiveFileName = &quot;cross-compile-demo.zip&quot;
-    destinationDirectory = file(&quot;$buildDir/dist&quot;)
+    archiveFileName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cross-compile-demo.zip&#34;</span>
+    destinationDirectory <span style="color:#f92672">=</span> file<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;$buildDir/dist&#34;</span><span style="color:#f92672">)</span>
 
-    from &quot;$buildDir/graal&quot; 
-}
-</code></pre>
-
+    from <span style="color:#e6db74">&#34;$buildDir/graal&#34;</span> 
+<span style="color:#f92672">}</span></code></pre></div>
 <p>With this additional task, we can now build and archive our executable by running <code>./gradlew zipExecutable</code>. This produces our zip file in the <em>build/dist</em> folder. You can see the full build file here: <a href="https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle">build.gradle</a></p>
 
 <h2 id="cross-compiling-with-github-actions">Cross-compiling with Github Actions</h2>
 
 <p>Our release process is triggered when a user tags a release and pushes these tags to github. This is accomplished with the following trigger in our workflow file:</p>
-
-<pre><code class="language-yaml">on:
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">on:
   push:
     tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-</code></pre>
-
+    - <span style="color:#e6db74">&#39;v*&#39;</span> <span style="color:#75715e"># Push events to matching v*, i.e. v1.0, v20.15.10</span></code></pre></div>
 <p>Our workflow then creates a github release for this tag and stores the <em>upload_url</em> variable as an output that our downstream jobs can use to upload their artifacts with the following job definition :</p>
-
-<pre><code class="language-yaml">jobs:
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">jobs:
   create-release:
     runs-on: ubuntu-latest
     outputs:
@@ -199,21 +186,18 @@ graal {
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-</code></pre>
-
+          draft: <span style="color:#66d9ef">false</span>
+          prerelease: <span style="color:#66d9ef">false</span></code></pre></div>
 <p>We now add jobs for each supported operating system, which depends on our <em>create-release</em> job by setting the <em>needs:</em> facet to <em>create-release</em>. The following workflow defines the release build for linux:</p>
-
-<pre><code class="language-yaml">  perform-release-linux:
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">  perform-release-linux:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up JDK <span style="color:#ae81ff">11</span>
       uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: <span style="color:#ae81ff">11</span>
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build native image with Gradle
@@ -226,9 +210,7 @@ graal {
         upload_url: ${{ needs.create-release.outputs.upload_url }}  
         asset_path: ./build/dist/cross-compile-demo.zip
         asset_name: cross-compile-demo_linux_amd64.zip
-        asset_content_type: application/zip
-</code></pre>
-
+        asset_content_type: application/zip</code></pre></div>
 <p>And this job references the <em>upload_url</em> output from our <em>create-release</em> job with the <code>${{ needs.create-release.outputs.upload_url }}</code> expression.
 You can see the full workflow file here: <a href="https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml">perform-release.yml</a></p>
 
