@@ -17,24 +17,14 @@
        <pubDate>Thu, 23 Jul 2020 14:04:10 +0200</pubDate>
        
        <guid>https://katmatt.github.io/posts/html5-boardgame-with-type-script/</guid>
-       <description>
-
-&lt;p&gt;A long, long time ago (to be precise: in the year 2000 AD) I wrote a C++/KDE version of the boardgame &lt;a href=&#34;https://en.wikipedia.org/wiki/Ishido:_The_Way_of_Stones&#34;&gt;Ishido&lt;/a&gt; and you can still find my website for this game conserved at the wayback machine: &lt;a href=&#34;https://web.archive.org/web/20000917222625/http://www.informatik.uni-oldenburg.de/~km/kishido/&#34;&gt;kishido&lt;/a&gt;&lt;/p&gt;
-
+       <description>&lt;p&gt;A long, long time ago (to be precise: in the year 2000 AD) I wrote a C++/KDE version of the boardgame &lt;a href=&#34;https://en.wikipedia.org/wiki/Ishido:_The_Way_of_Stones&#34;&gt;Ishido&lt;/a&gt; and you can still find my website for this game conserved at the wayback machine: &lt;a href=&#34;https://web.archive.org/web/20000917222625/http://www.informatik.uni-oldenburg.de/~km/kishido/&#34;&gt;kishido&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;This little game was even published on CD in a Japanese Linux magazine and I still own the copy they sent to me. Another funny story: In 2006 I was contacted by a programmer who wanted to use my graphics in a &lt;a href=&#34;https://en.wikipedia.org/wiki/PalmPilot_Professional&#34;&gt;Palm Pilot&lt;/a&gt; version of this game and you can still find it at &lt;a href=&#34;https://sourceforge.net/projects/palmishido&#34;&gt;https://sourceforge.net/projects/palmishido&lt;/a&gt;. And I&amp;rsquo;m still joking about my &lt;a href=&#34;https://en.wikipedia.org/wiki/Programmer_art&#34;&gt;&amp;ldquo;programmer artwork&amp;rdquo;&lt;/a&gt;, but I still can&amp;rsquo;t afford a graphic designer for my hobby projects and looks like some people even like my artwork :-)&lt;/p&gt;
-
 &lt;p&gt;And this leads us to the topic of this blog: I ported this game to HTML5/TypeScript and it was great to see how technology advanced in the last 20 years! And I had a lot of fun too and thought it would be interesting to share my insights with you.&lt;/p&gt;
-
 &lt;h2 id=&#34;setting-the-stage&#34;&gt;Setting the stage&lt;/h2&gt;
-
 &lt;p&gt;I initially considered to port the C++ code to TypeScript, but then I thought it would be more fun to start from scratch. At this stage, I also decided to ditch the old object-oriented model and instead go with the more functional approach.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;ishido-board.png&#34; alt=&#34;Ishido ported to HTML5&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;ishido-board.png&#34; alt=&#34;Ishido ported to HTML5&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;modeling-the-game-and-the-board&#34;&gt;Modeling the game and the board&lt;/h2&gt;
-
 &lt;p&gt;Since I didn&amp;rsquo;t want to use an object-oriented approach, I decided to use tagged unions to model the tiles on the board. And to enforce this idea further, I didn&amp;rsquo;t use the similar &lt;em&gt;interface&lt;/em&gt; construct and instead settled on using the &lt;em&gt;type&lt;/em&gt; construct instead.&lt;/p&gt;
-
 &lt;p&gt;I started with defining a union &lt;em&gt;Tile&lt;/em&gt; type, which is either an &lt;em&gt;EmptyTile&lt;/em&gt; or a &lt;em&gt;Stone&lt;/em&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Tile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;EmptyTile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Stone&lt;/span&gt;
 
@@ -46,9 +36,8 @@
     &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;stone&amp;#34;&lt;/span&gt;,
     &lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;,
     &lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And these two &lt;em&gt;Tile&lt;/em&gt; subtypes have a &lt;em&gt;type&lt;/em&gt; discriminator and this allows the typescript compile to infer the correct type in &lt;em&gt;switch&lt;/em&gt; or &lt;em&gt;if&lt;/em&gt; statements if they check the value of the &lt;em&gt;type&lt;/em&gt; discriminator.&lt;/p&gt;
-
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And these two &lt;em&gt;Tile&lt;/em&gt; subtypes have a &lt;em&gt;type&lt;/em&gt; discriminator and this allows the typescript compile to infer the correct type in &lt;em&gt;switch&lt;/em&gt; or &lt;em&gt;if&lt;/em&gt; statements if they check the value of the &lt;em&gt;type&lt;/em&gt; discriminator.&lt;/p&gt;
 &lt;p&gt;And these types then allowed me to model the &lt;em&gt;Board&lt;/em&gt; and the &lt;em&gt;Game&lt;/em&gt; with the following type definition:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Board&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
   &lt;span style=&#34;color:#a6e22e&#34;&gt;background&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;[][]
@@ -64,9 +53,8 @@
   &lt;span style=&#34;color:#a6e22e&#34;&gt;fourWays&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;number&lt;/span&gt;
   &lt;span style=&#34;color:#a6e22e&#34;&gt;showHint&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;boolean&lt;/span&gt;
   &lt;span style=&#34;color:#a6e22e&#34;&gt;assets&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Assets&lt;/span&gt;
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And as I said earlier, I didn&amp;rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.&lt;/p&gt;
-
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And as I said earlier, I didn&amp;rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.&lt;/p&gt;
 &lt;p&gt;For checking the valid positions for a given stone I again used a tagged union type:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MatchResult&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;NotMatching&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Match&lt;/span&gt;
 
@@ -127,13 +115,10 @@
     }
   }
   &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;matchResults&lt;/span&gt;
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&amp;rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!&lt;/p&gt;
-
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&amp;rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!&lt;/p&gt;
 &lt;h2 id=&#34;drawing-the-board&#34;&gt;Drawing the board&lt;/h2&gt;
-
 &lt;p&gt;I started by extracting the graphic from the tar archive I found on the wayback machine. As a side note: I created the graphics in 2000 with gimp and I can still successfully open them with the latest gimp version! You can see the game assets here: &lt;a href=&#34;https://github.com/katmatt/ishido/tree/master/assets&#34;&gt;assets&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;As you can see there, I created all variations of the stones and variations of the board tiles (with red highlighted versions for giving the player &amp;ldquo;subtle&amp;rdquo; placement hints) in separate files. These images use the png format with 8-bit indexed mode. The png format wasn&amp;rsquo;t supported by most browsers in 2000, but today every browser supports the png format. That means that we can use these images directly by creating an image html element and setting the &lt;em&gt;src&lt;/em&gt; attribute to the file name. And since I like to use the promise based &lt;em&gt;async/await&lt;/em&gt; feature with TypeScript, I ended up with this code for loading the images:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loadImage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Promise&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;HTMLImageElement&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Promise&lt;/span&gt;((&lt;span style=&#34;color:#a6e22e&#34;&gt;resolve&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;reject&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
@@ -142,8 +127,8 @@
         &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;addEventListener&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;error&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reject&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`Failed to load image &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)))
         &lt;span style=&#34;color:#a6e22e&#34;&gt;image&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;
     })
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This then allowed me to use a canvas html element with a fixed size of the old game resolution of &lt;em&gt;788x528&lt;/em&gt; pixels:&lt;/p&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This then allowed me to use a canvas html element with a fixed size of the old game resolution of &lt;em&gt;788x528&lt;/em&gt; pixels:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
 &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;header&lt;/span&gt;&amp;gt;
     &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;title&lt;/span&gt;&amp;gt;Ishido&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;title&lt;/span&gt;&amp;gt;
@@ -154,9 +139,8 @@
     &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Ishido&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
 
     &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;canvas&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ishido&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;width&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;788&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;height&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;528&amp;#34;&lt;/span&gt;&amp;gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;canvas&lt;/span&gt;&amp;gt;
-&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This very odd size was a side effect of me using a CRT monitor with a maximum resolution of &lt;em&gt;800x600&lt;/em&gt; at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.&lt;/p&gt;
-
+&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This very odd size was a side effect of me using a CRT monitor with a maximum resolution of &lt;em&gt;800x600&lt;/em&gt; at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.&lt;/p&gt;
 &lt;p&gt;And since my plan was to avoid using any additional library, I then started with the following init function:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;initGame() {&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;canvas&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; document.&lt;span style=&#34;color:#a6e22e&#34;&gt;getElementById&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ishido&amp;#39;&lt;/span&gt;)
@@ -166,16 +150,16 @@
         &lt;span style=&#34;color:#a6e22e&#34;&gt;alert&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Your browser isn&amp;#39;t supported by this game!&amp;#34;&lt;/span&gt;)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
     }
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;When I then started to play around with the &lt;em&gt;ctx&lt;/em&gt; graphics context, Visual Studio Code suggested me to add the following to my &lt;em&gt;tsconfig.json&lt;/em&gt; file:&lt;/p&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When I then started to play around with the &lt;em&gt;ctx&lt;/em&gt; graphics context, Visual Studio Code suggested me to add the following to my &lt;em&gt;tsconfig.json&lt;/em&gt; file:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;compilerOptions&amp;#34;&lt;/span&gt;: {
         &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;lib&amp;#34;&lt;/span&gt;: [
             &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;dom&amp;#34;&lt;/span&gt;
         ]
     }
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage&#34;&gt;drawImage&lt;/a&gt; method on the canvas html element. I then ended up with the following function to draw the board:&lt;/p&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage&#34;&gt;drawImage&lt;/a&gt; method on the canvas html element. I then ended up with the following function to draw the board:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;drawStone&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;CanvasRenderingContext2D&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tileset&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;HTMLImageElement&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;stone&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Stone&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;position&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;Position2D&lt;/span&gt;) {
   &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; {&lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;symbol&lt;/span&gt;} &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stone&lt;/span&gt;
   &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tileX&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;color&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TILE_WIDTH&lt;/span&gt;
@@ -220,23 +204,16 @@
       }
     }
   }
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This function provides type-safe access to the &lt;em&gt;Stone&lt;/em&gt; properties because the typescript compiler can infer the correct type based on the &lt;em&gt;switch&lt;/em&gt; statement. This makes it quite easy to write this function.&lt;/p&gt;
-
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This function provides type-safe access to the &lt;em&gt;Stone&lt;/em&gt; properties because the typescript compiler can infer the correct type based on the &lt;em&gt;switch&lt;/em&gt; statement. This makes it quite easy to write this function.&lt;/p&gt;
 &lt;p&gt;But the &lt;em&gt;draw&lt;/em&gt; function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.&lt;/p&gt;
-
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
 &lt;p&gt;It took me a few evenings to port this old game to run in a web browser. I had a lot of fun writing the code and using typescript made it much easier for me to discover the canvas API. Since I didn&amp;rsquo;t have to care about memory management and didn&amp;rsquo;t split my source code into modules, implementing this game was very quick and fun too. And the code is much smaller than the original C++ source code! And smaller code means that the code is much easier to read. And since the game is so easy and small, I even didn&amp;rsquo;t write any tests for it!&lt;/p&gt;
-
 &lt;p&gt;That&amp;rsquo;s how most software was written in the early 2000s: No automatic tests and if you were lucky, someone introduced a version management system like &lt;a href=&#34;https://en.wikipedia.org/wiki/Concurrent_Versions_System&#34;&gt;CVS&lt;/a&gt; to your project. git or github didn&amp;rsquo;t exist at that time! And I was very lucky that I had an &lt;a href=&#34;https://en.wikipedia.org/wiki/Extreme_programming&#34;&gt;extreme programming&lt;/a&gt; training at my first job in 2001 and since then I&amp;rsquo;m a big advocate of developers writing their tests!&lt;/p&gt;
-
 &lt;p&gt;You can find the whole source code for this game here: &lt;a href=&#34;https://github.com/katmatt/ishido&#34;&gt;https://github.com/katmatt/ishido&lt;/a&gt; and the game logic is contained in this file &lt;a href=&#34;https://github.com/katmatt/ishido/blob/master/src/index.ts&#34;&gt;index.ts&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;And without further ado, here is the resulting game and I hope you enjoy playing it too!&lt;/p&gt;
-
-&lt;p&gt;&lt;script type=&#34;text/javascript&#34; src=&#34;dist/index.js&#34;&gt;&lt;/script&gt;
-&lt;canvas id=&#34;ishido&#34; width=&#34;788&#34; height=&#34;528&#34;&gt;&lt;/canvas&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
 </description>
      </item>
    
@@ -246,21 +223,15 @@
        <pubDate>Wed, 15 Jul 2020 15:35:10 +0200</pubDate>
        
        <guid>https://katmatt.github.io/posts/graalvm-cross-compile-gh-actions/</guid>
-       <description>
-
-&lt;p&gt;GraalVM (&lt;a href=&#34;https://www.graalvm.org/&#34;&gt;https://www.graalvm.org/&lt;/a&gt;) allows to compile Java programs into native code with the &lt;em&gt;native-image&lt;/em&gt; executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.&lt;/p&gt;
-
+       <description>&lt;p&gt;GraalVM (&lt;a href=&#34;https://www.graalvm.org/&#34;&gt;https://www.graalvm.org/&lt;/a&gt;) allows to compile Java programs into native code with the &lt;em&gt;native-image&lt;/em&gt; executable. This gives Java developers new options because you can now release native executable for your users. And that brings Java to the world of easy to install command-line tools, which at the moment is one of the unique selling points of newer programming languages like Go or Rust. Both of these languages have dedicated support for cross-compiling programs/libraries to target architectures different from the host system.&lt;/p&gt;
 &lt;p&gt;But one limitation of &lt;em&gt;native-image&lt;/em&gt; is that it doesn&amp;rsquo;t support cross-compilation out of the box (see open issue: &lt;a href=&#34;https://github.com/oracle/graal/issues/407&#34;&gt;native-image: Cross compilation support?&lt;/a&gt;). That means that you have to run &lt;em&gt;native-image&lt;/em&gt; on all platforms that your Java program should support.&lt;/p&gt;
-
 &lt;p&gt;This article will show you how you can use github actions to simplify this task by automating it. Then the only thing you have to do to trigger the release of native excutables of your program is to tag your release and push that tag to github.&lt;/p&gt;
-
 &lt;h2 id=&#34;setup-your-gradle-build&#34;&gt;Setup your gradle build&lt;/h2&gt;
-
 &lt;p&gt;In this article,  we will use the popular &lt;a href=&#34;https://gradle.org/&#34;&gt;gradle&lt;/a&gt; build tool together with the &lt;a href=&#34;https://github.com/palantir/gradle-graal&#34;&gt;Palantir GraalVM gradle plugin&lt;/a&gt;. This setup will download the GraalVM toolchain, cache it locally and thus makes it very easy to use. This plugin is available from the gradle plugin central and this makes it very easy to integrate it into our &lt;em&gt;gradle.build&lt;/em&gt; file:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;plugins &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     id &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.palantir.graal&amp;#39;&lt;/span&gt; version &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;0.7.1&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Then you can add the following entries to your modules &lt;em&gt;build.gradle&lt;/em&gt; to configure the &lt;em&gt;nativeImage&lt;/em&gt; gradle task:&lt;/p&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then you can add the following entries to your modules &lt;em&gt;build.gradle&lt;/em&gt; to configure the &lt;em&gt;nativeImage&lt;/em&gt; gradle task:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;apply plugin: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.palantir.graal&amp;#39;&lt;/span&gt;
 
 graal &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
@@ -268,17 +239,12 @@ graal &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     outputName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cross-compile-demo&amp;#39;&lt;/span&gt;
     mainClass &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;com.maschinenstuermer.crosscompile.demo.App&amp;#39;&lt;/span&gt;
     javaVersion &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;11&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;build-your-first-native-executable&#34;&gt;Build your first native executable&lt;/h2&gt;
-
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;build-your-first-native-executable&#34;&gt;Build your first native executable&lt;/h2&gt;
 &lt;p&gt;After this setup, building your first native executable is as simple as running &lt;code&gt;./gradlew nativeImage&lt;/code&gt;. This will download the graal toolchain to your computer, execute &lt;em&gt;native-image&lt;/em&gt; and generate the executable to &lt;em&gt;build/graal/cross-compile-demo&lt;/em&gt;.&lt;/p&gt;
-
 &lt;p&gt;Running this executable then outputs the classical:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code&gt;Hello world.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our &lt;em&gt;build.gradle&lt;/em&gt; file:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The next step is to archive the executable into a zip file, which we later will upload to the github release. We do this by adding the following task to our &lt;em&gt;build.gradle&lt;/em&gt; file:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-gradle&#34; data-lang=&#34;gradle&#34;&gt;task &lt;span style=&#34;color:#a6e22e&#34;&gt;zipExecutable&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;type: Zip&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     dependsOn &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;nativeImage&amp;#39;&lt;/span&gt;
     
@@ -286,73 +252,64 @@ graal &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     destinationDirectory &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; file&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$buildDir/dist&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 
     from &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$buildDir/graal&amp;#34;&lt;/span&gt; 
-&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;With this additional task, we can now build and archive our executable by running &lt;code&gt;./gradlew zipExecutable&lt;/code&gt;. This produces our zip file in the &lt;em&gt;build/dist&lt;/em&gt; folder. You can see the full build file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle&#34;&gt;build.gradle&lt;/a&gt;&lt;/p&gt;
-
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With this additional task, we can now build and archive our executable by running &lt;code&gt;./gradlew zipExecutable&lt;/code&gt;. This produces our zip file in the &lt;em&gt;build/dist&lt;/em&gt; folder. You can see the full build file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/build.gradle&#34;&gt;build.gradle&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;cross-compiling-with-github-actions&#34;&gt;Cross-compiling with Github Actions&lt;/h2&gt;
-
 &lt;p&gt;Our release process is triggered when a user tags a release and pushes these tags to github. This is accomplished with the following trigger in our workflow file:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;on:
-  push:
-    tags:
-    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;v*&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Push events to matching v*, i.e. v1.0, v20.15.10&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Our workflow then creates a github release for this tag and stores the &lt;em&gt;upload_url&lt;/em&gt; variable as an output that our downstream jobs can use to upload their artifacts with the following job definition :&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create-release.outputs.upload_url }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
-          prerelease: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;We now add jobs for each supported operating system, which depends on our &lt;em&gt;create-release&lt;/em&gt; job by setting the &lt;em&gt;needs:&lt;/em&gt; facet to &lt;em&gt;create-release&lt;/em&gt;. The following workflow defines the release build for linux:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;  perform-release-linux:
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
-      uses: actions/setup-java@v1
-      with:
-        java-version: &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build native image with Gradle
-      run: ./gradlew zipExecutable
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create-release.outputs.upload_url }}  
-        asset_path: ./build/dist/cross-compile-demo.zip
-        asset_name: cross-compile-demo_linux_amd64.zip
-        asset_content_type: application/zip&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And this job references the &lt;em&gt;upload_url&lt;/em&gt; output from our &lt;em&gt;create-release&lt;/em&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;on&lt;/span&gt;:
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;push&lt;/span&gt;:
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;tags&lt;/span&gt;:
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;v*&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Push events to matching v*, i.e. v1.0, v20.15.10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Our workflow then creates a github release for this tag and stores the &lt;em&gt;upload_url&lt;/em&gt; variable as an output that our downstream jobs can use to upload their artifacts with the following job definition :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;jobs&lt;/span&gt;:
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;create-release&lt;/span&gt;:
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;runs-on&lt;/span&gt;: ubuntu-latest
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;outputs&lt;/span&gt;:
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;upload_url&lt;/span&gt;: ${{ steps.create-release.outputs.upload_url }}
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;steps&lt;/span&gt;:
+      - &lt;span style=&#34;color:#66d9ef&#34;&gt;uses&lt;/span&gt;: actions/checkout@v2
+      - &lt;span style=&#34;color:#66d9ef&#34;&gt;name&lt;/span&gt;: Create Release
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;id&lt;/span&gt;: create-release
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;uses&lt;/span&gt;: actions/create-release@v1
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;env&lt;/span&gt;:
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;GITHUB_TOKEN&lt;/span&gt;: ${{ secrets.GITHUB_TOKEN }}
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt;:
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;tag_name&lt;/span&gt;: ${{ github.ref }}
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;release_name&lt;/span&gt;: Release ${{ github.ref }}
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;draft&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+          &lt;span style=&#34;color:#66d9ef&#34;&gt;prerelease&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We now add jobs for each supported operating system, which depends on our &lt;em&gt;create-release&lt;/em&gt; job by setting the &lt;em&gt;needs:&lt;/em&gt; facet to &lt;em&gt;create-release&lt;/em&gt;. The following workflow defines the release build for linux:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;perform-release-linux&lt;/span&gt;:
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;needs&lt;/span&gt;: create-release
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;runs-on&lt;/span&gt;: ubuntu-latest
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;steps&lt;/span&gt;:
+    - &lt;span style=&#34;color:#66d9ef&#34;&gt;uses&lt;/span&gt;: actions/checkout@v2
+    - &lt;span style=&#34;color:#66d9ef&#34;&gt;name&lt;/span&gt;: Set up JDK &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;uses&lt;/span&gt;: actions/setup-java@v1
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;java-version&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;
+    - &lt;span style=&#34;color:#66d9ef&#34;&gt;name&lt;/span&gt;: Grant execute permission for gradlew
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;run&lt;/span&gt;: chmod +x gradlew
+    - &lt;span style=&#34;color:#66d9ef&#34;&gt;name&lt;/span&gt;: Build native image with Gradle
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;run&lt;/span&gt;: ./gradlew zipExecutable
+    - &lt;span style=&#34;color:#66d9ef&#34;&gt;name&lt;/span&gt;: Upload Release Asset
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;uses&lt;/span&gt;: actions/upload-release-asset@v1
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;env&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;GITHUB_TOKEN&lt;/span&gt;: ${{ secrets.GITHUB_TOKEN }}
+      &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;upload_url&lt;/span&gt;: ${{ needs.create-release.outputs.upload_url }}  
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;asset_path&lt;/span&gt;: ./build/dist/cross-compile-demo.zip
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;asset_name&lt;/span&gt;: cross-compile-demo_linux_amd64.zip
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;asset_content_type&lt;/span&gt;: application/zip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this job references the &lt;em&gt;upload_url&lt;/em&gt; output from our &lt;em&gt;create-release&lt;/em&gt; job with the &lt;code&gt;${{ needs.create-release.outputs.upload_url }}&lt;/code&gt; expression.
 You can see the full workflow file here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/blob/master/.github/workflows/perform-release.yml&#34;&gt;perform-release.yml&lt;/a&gt;&lt;/p&gt;
-
 &lt;h3 id=&#34;issues-with-the-build-on-windows&#34;&gt;Issues with the build on windows&lt;/h3&gt;
-
 &lt;p&gt;I initially started with the default java 8 version for the graal build. But I couldn&amp;rsquo;t get this to run on windows because it required the installation of some additional build tools and I wasn&amp;rsquo;t able to set them up correctly. But when I switched to Java 11 then everything worked as smoothly as I hoped for!
 And you still can see my attempts fixing this issue in the commit history: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions/commits/master&#34;&gt;commit history&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;Another unexpected finding was that the workflow can perform the unix command &lt;em&gt;chmod&lt;/em&gt; on windows machines! I guess the github windows images are configured with the windows subsystem for linux (WSL) and this makes it possible to &lt;em&gt;chmod&lt;/em&gt;.&lt;/p&gt;
-
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
 &lt;p&gt;This article showed you how you can leverage github actions to cross-compile your Java program for different target architectures. The presented solution works with an easy setup. But it has a drawback too: Our workflow downloads the GraalVM distribution for each platform on each release. And releasing our simple demo program took already 5 minutes.&lt;/p&gt;
-
 &lt;p&gt;But if you compare this solution with running the cross-compilation manually - across several computers or virtual machines - and if your release frequency is daily or weekly, then this article provides a good enough solution. Our proposed solution could be further improved by using matrix builds or by caching the downloaded GraalVM distribution, so feel free to improve this solution further!&lt;/p&gt;
-
 &lt;p&gt;You can find the source code for this article here: &lt;a href=&#34;https://github.com/katmatt/cross-compile-gh-actions&#34;&gt;https://github.com/katmatt/cross-compile-gh-actions&lt;/a&gt;&lt;/p&gt;
 </description>
      </item>

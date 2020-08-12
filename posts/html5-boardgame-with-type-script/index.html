@@ -20,7 +20,7 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
 <meta name="twitter:description" content="A long, long time ago (to be precise: in the year 2000 AD) I wrote a C&#43;&#43;/KDE version of the boardgame Ishido and you can still find my website for this game conserved at the wayback machine: kishido
 This little game was even published on CD in a Japanese Linux magazine and I still own the copy they sent to me. Another funny story: In 2006 I was contacted by a programmer who wanted to use my graphics in a Palm Pilot version of this game and you can still find it at https://sourceforge."/>
 
-<meta name="generator" content="Hugo 0.57.2" />
+<meta name="generator" content="Hugo 0.68.3" />
     
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
@@ -119,24 +119,14 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
     
 
 
-    
-
-<p>A long, long time ago (to be precise: in the year 2000 AD) I wrote a C++/KDE version of the boardgame <a href="https://en.wikipedia.org/wiki/Ishido:_The_Way_of_Stones">Ishido</a> and you can still find my website for this game conserved at the wayback machine: <a href="https://web.archive.org/web/20000917222625/http://www.informatik.uni-oldenburg.de/~km/kishido/">kishido</a></p>
-
+    <p>A long, long time ago (to be precise: in the year 2000 AD) I wrote a C++/KDE version of the boardgame <a href="https://en.wikipedia.org/wiki/Ishido:_The_Way_of_Stones">Ishido</a> and you can still find my website for this game conserved at the wayback machine: <a href="https://web.archive.org/web/20000917222625/http://www.informatik.uni-oldenburg.de/~km/kishido/">kishido</a></p>
 <p>This little game was even published on CD in a Japanese Linux magazine and I still own the copy they sent to me. Another funny story: In 2006 I was contacted by a programmer who wanted to use my graphics in a <a href="https://en.wikipedia.org/wiki/PalmPilot_Professional">Palm Pilot</a> version of this game and you can still find it at <a href="https://sourceforge.net/projects/palmishido">https://sourceforge.net/projects/palmishido</a>. And I&rsquo;m still joking about my <a href="https://en.wikipedia.org/wiki/Programmer_art">&ldquo;programmer artwork&rdquo;</a>, but I still can&rsquo;t afford a graphic designer for my hobby projects and looks like some people even like my artwork :-)</p>
-
 <p>And this leads us to the topic of this blog: I ported this game to HTML5/TypeScript and it was great to see how technology advanced in the last 20 years! And I had a lot of fun too and thought it would be interesting to share my insights with you.</p>
-
 <h2 id="setting-the-stage">Setting the stage</h2>
-
 <p>I initially considered to port the C++ code to TypeScript, but then I thought it would be more fun to start from scratch. At this stage, I also decided to ditch the old object-oriented model and instead go with the more functional approach.</p>
-
-<p><img src="ishido-board.png" alt="Ishido ported to HTML5" /></p>
-
+<p><img src="ishido-board.png" alt="Ishido ported to HTML5"></p>
 <h2 id="modeling-the-game-and-the-board">Modeling the game and the board</h2>
-
 <p>Since I didn&rsquo;t want to use an object-oriented approach, I decided to use tagged unions to model the tiles on the board. And to enforce this idea further, I didn&rsquo;t use the similar <em>interface</em> construct and instead settled on using the <em>type</em> construct instead.</p>
-
 <p>I started with defining a union <em>Tile</em> type, which is either an <em>EmptyTile</em> or a <em>Stone</em>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Tile</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">EmptyTile</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Stone</span>
 
@@ -148,9 +138,8 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
     <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;stone&#34;</span>,
     <span style="color:#a6e22e">symbol</span>: <span style="color:#66d9ef">number</span>,
     <span style="color:#a6e22e">color</span>: <span style="color:#66d9ef">number</span>
-}</code></pre></div>
-<p>And these two <em>Tile</em> subtypes have a <em>type</em> discriminator and this allows the typescript compile to infer the correct type in <em>switch</em> or <em>if</em> statements if they check the value of the <em>type</em> discriminator.</p>
-
+}
+</code></pre></div><p>And these two <em>Tile</em> subtypes have a <em>type</em> discriminator and this allows the typescript compile to infer the correct type in <em>switch</em> or <em>if</em> statements if they check the value of the <em>type</em> discriminator.</p>
 <p>And these types then allowed me to model the <em>Board</em> and the <em>Game</em> with the following type definition:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">Board</span> <span style="color:#f92672">=</span> {
   <span style="color:#a6e22e">background</span>: <span style="color:#66d9ef">number</span>[][]
@@ -166,9 +155,8 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
   <span style="color:#a6e22e">fourWays</span>: <span style="color:#66d9ef">number</span>
   <span style="color:#a6e22e">showHint</span>: <span style="color:#66d9ef">boolean</span>
   <span style="color:#a6e22e">assets</span>: <span style="color:#66d9ef">Assets</span>
-}</code></pre></div>
-<p>And as I said earlier, I didn&rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.</p>
-
+}
+</code></pre></div><p>And as I said earlier, I didn&rsquo;t use any fancy libraries and instead used arrays as stacks. And two-dimensional arrays in column first order to model the board itself.</p>
 <p>For checking the valid positions for a given stone I again used a tagged union type:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">MatchResult</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">NotMatching</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Match</span>
 
@@ -229,13 +217,10 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
     }
   }
   <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">matchResults</span>
-}</code></pre></div>
-<p>And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!</p>
-
+}
+</code></pre></div><p>And the game then mainly consists of an event handling function which calls functions to change the state of the game and then simply redraws the whole board. And since it&rsquo;s the year 2020 now, no further optimizations were needed to make the game as enjoyable as in 2000!</p>
 <h2 id="drawing-the-board">Drawing the board</h2>
-
 <p>I started by extracting the graphic from the tar archive I found on the wayback machine. As a side note: I created the graphics in 2000 with gimp and I can still successfully open them with the latest gimp version! You can see the game assets here: <a href="https://github.com/katmatt/ishido/tree/master/assets">assets</a></p>
-
 <p>As you can see there, I created all variations of the stones and variations of the board tiles (with red highlighted versions for giving the player &ldquo;subtle&rdquo; placement hints) in separate files. These images use the png format with 8-bit indexed mode. The png format wasn&rsquo;t supported by most browsers in 2000, but today every browser supports the png format. That means that we can use these images directly by creating an image html element and setting the <em>src</em> attribute to the file name. And since I like to use the promise based <em>async/await</em> feature with TypeScript, I ended up with this code for loading the images:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">loadImage</span>(<span style="color:#a6e22e">src</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">HTMLImageElement</span><span style="color:#f92672">&gt;</span> {
     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Promise</span>((<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) <span style="color:#f92672">=&gt;</span> {
@@ -244,8 +229,8 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
         <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">addEventListener</span>(<span style="color:#e6db74">&#39;error&#39;</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">reject</span>(<span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`Failed to load image </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">src</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)))
         <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">src</span>
     })
-}</code></pre></div>
-<p>This then allowed me to use a canvas html element with a fixed size of the old game resolution of <em>788x528</em> pixels:</p>
+}
+</code></pre></div><p>This then allowed me to use a canvas html element with a fixed size of the old game resolution of <em>788x528</em> pixels:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html"><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
 &lt;<span style="color:#f92672">header</span>&gt;
     &lt;<span style="color:#f92672">title</span>&gt;Ishido&lt;/<span style="color:#f92672">title</span>&gt;
@@ -256,9 +241,8 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
     &lt;<span style="color:#f92672">h1</span>&gt;Ishido&lt;/<span style="color:#f92672">h1</span>&gt;
 
     &lt;<span style="color:#f92672">canvas</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ishido&#34;</span> <span style="color:#a6e22e">width</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;788&#34;</span> <span style="color:#a6e22e">height</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;528&#34;</span>&gt;&lt;/<span style="color:#f92672">canvas</span>&gt;
-&lt;/<span style="color:#f92672">body</span>&gt;</code></pre></div>
-<p>This very odd size was a side effect of me using a CRT monitor with a maximum resolution of <em>800x600</em> at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.</p>
-
+&lt;/<span style="color:#f92672">body</span>&gt;
+</code></pre></div><p>This very odd size was a side effect of me using a CRT monitor with a maximum resolution of <em>800x600</em> at that time. If you then subtract the windows borders and menu size, you end up with that graphic size.</p>
 <p>And since my plan was to avoid using any additional library, I then started with the following init function:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#a6e22e">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initGame() {</span>
     <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">canvas</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#e6db74">&#39;ishido&#39;</span>)
@@ -268,16 +252,16 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
         <span style="color:#a6e22e">alert</span>(<span style="color:#e6db74">&#34;Your browser isn&#39;t supported by this game!&#34;</span>)
         <span style="color:#66d9ef">return</span>
     }
-}</code></pre></div>
-<p>When I then started to play around with the <em>ctx</em> graphics context, Visual Studio Code suggested me to add the following to my <em>tsconfig.json</em> file:</p>
+}
+</code></pre></div><p>When I then started to play around with the <em>ctx</em> graphics context, Visual Studio Code suggested me to add the following to my <em>tsconfig.json</em> file:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
     <span style="color:#f92672">&#34;compilerOptions&#34;</span>: {
         <span style="color:#f92672">&#34;lib&#34;</span>: [
             <span style="color:#e6db74">&#34;dom&#34;</span>
         ]
     }
-}</code></pre></div>
-<p>And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage">drawImage</a> method on the canvas html element. I then ended up with the following function to draw the board:</p>
+}
+</code></pre></div><p>And this then allowed me to leverage the correct dom types and made it much easier to explore the HTML5 graphic context api. For drawing the board I then just had to use the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage">drawImage</a> method on the canvas html element. I then ended up with the following function to draw the board:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">drawStone</span>(<span style="color:#a6e22e">ctx</span>: <span style="color:#66d9ef">CanvasRenderingContext2D</span>, <span style="color:#a6e22e">tileset</span>: <span style="color:#66d9ef">HTMLImageElement</span>, <span style="color:#a6e22e">stone</span>: <span style="color:#66d9ef">Stone</span>, <span style="color:#a6e22e">position</span>: <span style="color:#66d9ef">Position2D</span>) {
   <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">color</span>, <span style="color:#a6e22e">symbol</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">stone</span>
   <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tileX</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">color</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">TILE_WIDTH</span>
@@ -322,23 +306,16 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
       }
     }
   }
-}</code></pre></div>
-<p>This function provides type-safe access to the <em>Stone</em> properties because the typescript compiler can infer the correct type based on the <em>switch</em> statement. This makes it quite easy to write this function.</p>
-
+}
+</code></pre></div><p>This function provides type-safe access to the <em>Stone</em> properties because the typescript compiler can infer the correct type based on the <em>switch</em> statement. This makes it quite easy to write this function.</p>
 <p>But the <em>draw</em> function is a bit more complicated because the background tiles are initialized with random numbers to give the board more variation. And the game also provides a hint feature, which highlights the valid positions on the board with background tiles highlighted with a red tint.</p>
-
 <h2 id="conclusion">Conclusion</h2>
-
 <p>It took me a few evenings to port this old game to run in a web browser. I had a lot of fun writing the code and using typescript made it much easier for me to discover the canvas API. Since I didn&rsquo;t have to care about memory management and didn&rsquo;t split my source code into modules, implementing this game was very quick and fun too. And the code is much smaller than the original C++ source code! And smaller code means that the code is much easier to read. And since the game is so easy and small, I even didn&rsquo;t write any tests for it!</p>
-
 <p>That&rsquo;s how most software was written in the early 2000s: No automatic tests and if you were lucky, someone introduced a version management system like <a href="https://en.wikipedia.org/wiki/Concurrent_Versions_System">CVS</a> to your project. git or github didn&rsquo;t exist at that time! And I was very lucky that I had an <a href="https://en.wikipedia.org/wiki/Extreme_programming">extreme programming</a> training at my first job in 2001 and since then I&rsquo;m a big advocate of developers writing their tests!</p>
-
 <p>You can find the whole source code for this game here: <a href="https://github.com/katmatt/ishido">https://github.com/katmatt/ishido</a> and the game logic is contained in this file <a href="https://github.com/katmatt/ishido/blob/master/src/index.ts">index.ts</a></p>
-
 <p>And without further ado, here is the resulting game and I hope you enjoy playing it too!</p>
-
-<p><script type="text/javascript" src="dist/index.js"></script>
-<canvas id="ishido" width="788" height="528"></canvas></p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 
 
 </article>
@@ -355,6 +332,33 @@ This little game was even published on CD in a Japanese Linux magazine and I sti
     </ul>
 </section>
   
+    
+        <section id="utterances"></section>
+
+<script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        let s = document.createElement("script");
+        s.setAttribute("repo", "katmatt\/katmatt-blogs");
+        s.src = "https://utteranc.es/client.js";
+        
+          s.setAttribute("issue-term", "pathname");
+        
+        
+        document.getElementById("utterances").innerHTML = "";
+        document.getElementById("utterances").appendChild(s);
+    } else {
+        let s = document.createElement("script");
+        s.setAttribute("repo", "katmatt\/katmatt-blogs");
+        s.src = "https://utteranc.es/client.js";
+        
+          s.setAttribute("issue-term", "pathname");
+        
+        
+        document.getElementById("utterances").innerHTML = "";
+        document.getElementById("utterances").appendChild(s);
+    }
+</script>
+
     
     
   
