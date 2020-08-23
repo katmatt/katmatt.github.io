@@ -212,8 +212,8 @@
 &lt;p&gt;That&amp;rsquo;s how most software was written in the early 2000s: No automatic tests and if you were lucky, someone introduced a version management system like &lt;a href=&#34;https://en.wikipedia.org/wiki/Concurrent_Versions_System&#34;&gt;CVS&lt;/a&gt; to your project. git or github didn&amp;rsquo;t exist at that time! And I was very lucky that I had an &lt;a href=&#34;https://en.wikipedia.org/wiki/Extreme_programming&#34;&gt;extreme programming&lt;/a&gt; training at my first job in 2001 and since then I&amp;rsquo;m a big advocate of developers writing their tests!&lt;/p&gt;
 &lt;p&gt;You can find the whole source code for this game here: &lt;a href=&#34;https://github.com/katmatt/ishido&#34;&gt;https://github.com/katmatt/ishido&lt;/a&gt; and the game logic is contained in this file &lt;a href=&#34;https://github.com/katmatt/ishido/blob/master/src/index.ts&#34;&gt;index.ts&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;And without further ado, here is the resulting game and I hope you enjoy playing it too!&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;dist/index.js&#34;&gt;&lt;/script&gt;
+&lt;p&gt;&lt;canvas id=&#34;ishido&#34; width=&#34;788&#34; height=&#34;528&#34;&gt;&lt;/canvas&gt;&lt;/p&gt;
 </description>
      </item>
    
