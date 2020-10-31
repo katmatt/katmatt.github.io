@@ -30,7 +30,7 @@ This feels a bit like in the movie &lt;a href=&#34;https://en.wikipedia.org/wiki
 I still have to get my head around it and especially working with an editor/IDE running in my web browser still feels a bit strange to me.&lt;/p&gt;
 &lt;h1 id=&#34;how-does-it-work&#34;&gt;How does it work?&lt;/h1&gt;
 &lt;p&gt;You can open up any project that is hosted either on &lt;a href=&#34;https://about.gitlab.com/&#34;&gt;gitlab&lt;/a&gt;, &lt;a href=&#34;http://github.com&#34;&gt;github&lt;/a&gt; or &lt;a href=&#34;https://bitbucket.org/&#34;&gt;bitbucket&lt;/a&gt;
-by adding the repository url to the following gitpod url &lt;code&gt;http://gitpod/#&amp;lt;YOUR_GIT_REPO_URL&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+by adding the repository url to the following gitpod url &lt;code&gt;https://gitpod.io/#&amp;lt;YOUR_GIT_REPO_URL&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;And that&amp;rsquo;s just the beginning: If you use this link for the first time, gitpod will open a wizard that helps you to setup your development environment. When you used the link to my blogs gitpod development environment, then gitpod already started a development environment for you that contains everything to write a blog post.&lt;/p&gt;
 &lt;h1 id=&#34;what-is-a-development-environment&#34;&gt;What is a development environment?&lt;/h1&gt;
 &lt;p&gt;I normally write my blog post on my laptop that runs ubuntu linux. I use hugo to generate my
